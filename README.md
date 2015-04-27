@@ -1,6 +1,6 @@
-vim-coverage is a utility for syntax-aware code formatting. vim-coverage relies
-on [maktaba](https://github.com/google/vim-maktaba) for registration and
-management of coverage providing plugins.
+vim-coverage is a utility for visualizing test coverage results in vim.
+vim-coverage relies on [maktaba](https://github.com/google/vim-maktaba) for
+registration and management of coverage providing plugins.
 
 For details, see the helpfiles in the `doc/` directory. The helpfiles are also
 available via `:help vim-coverage` if vim-coverage is installed (and helptags
