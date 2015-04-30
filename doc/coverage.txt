@@ -98,6 +98,10 @@ Default: 'red' `
 Configures whether plugin/commands.vim should be loaded.
 Default: 1 `
 
+                                                   *coverage:plugin[coverage]*
+Configures whether plugin/coverage.vim should be loaded.
+Default: 1 `
+
                                                    *coverage:plugin[mappings]*
 Configures whether plugin/mappings.vim should be loaded.
 Default: 0 `
