@@ -1,0 +1,41 @@
+Install dependencies:
+
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h:h')
+  :source $VROOMDIR/setupvroom.vim
+  :let g:fixturepath = maktaba#path#Join([
+  |fnamemodify($VROOMFILE, ':p:h'), 'fixture1', 'google3'])
+
+  :Glug! coverage
+
+The coverage plugin provides a :CoverageShow command that calls the coverage
+provider and renders the coverage, if available. Let's first create and register
+a fake coverage provider.
+
+  :let g:thisdir = fnamemodify($VROOMFILE, ':p:h')
+  :let g:repo = maktaba#path#Join([g:thisdir, 'fakeplugins'])
+  :let g:pluginpath = maktaba#path#Join([g:repo, 'myplugin'])
+  :let g:plugin = maktaba#plugin#Install(g:pluginpath)
+
+  :function TestIsAvailable(file)
+  : return a:file =~# '.*dummy.py'
+  :endfunction
+
+  :function TestGetCoverage(file)
+  : return {'covered': [1, 3, 5, 7, 9, 11, 13],
+  |     'uncovered': [2, 4, 6, 8, 10, 12, 14],
+  |     'partial': []}
+  :endfunction
+
+  :let g:registry = maktaba#extension#GetRegistry('coverage')
+  :call g:registry.AddExtension({
+  |      'name': 'test_coverage_provider',
+  |      'GetCoverage': function('TestGetCoverage'),
+  |      'IsAvailable': function('TestIsAvailable')})
+
+  :exe 'silent edit ' . g:fixturepath . '/dummy.python'
+  :CoverageShow test_coverage_provider
+  ~ Coverage is 50.00% (7/14 lines).
+  :exe 'silent file foo.unrecognized'
+  :CoverageShow test_coverage_provider
+  ~ Error rendering coverage: ERROR\(NotFound\): Provider (regex)
+  | test_coverage_provider is not available for file .*foo.unrecognized
