@@ -1,11 +1,14 @@
-Install dependencies:
+This file demonstrates the basics of coverage usage.
+
+In order for these tests to work, maktaba MUST be in the same parent directory
+as coverage. Given that that's the case, all we have to do is source the
+setupvroom.vim file, which bootstraps the coverage plugin and configures it to
+work properly under vroom.
 
   :let g:repo = fnamemodify($VROOMFILE, ':p:h:h:h')
   :source $VROOMDIR/setupvroom.vim
   :let g:fixturepath = maktaba#path#Join([
   |fnamemodify($VROOMFILE, ':p:h'), 'fixture1', 'google3'])
-
-  :Glug! coverage
 
 The coverage plugin provides a :CoverageShow command that calls the coverage
 provider and renders the coverage, if available. Let's first create and register
