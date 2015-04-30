@@ -1,6 +1,8 @@
 {
+  "name": "coverage",
   "description": "Generic coverage reporter.",
+  "repository": {"type": "git", "url": "git://github.com/google/vim-coverage"},
   "dependencies": {
-    "maktaba": {"type": "git", "url": "git://github.com/google/vim-maktaba"},
+    "maktaba": {"type": "git", "url": "git://github.com/google/vim-maktaba"}
   }
 }
