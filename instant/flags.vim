@@ -32,7 +32,7 @@
 
 " This plugin offers generic support for rendering code coverage. Coverage
 " providers can be registered by other plugins that integrate with |coverage|,
-" using |coveragelib| for the registration.
+" using |maktaba| for the registration.
 
 ""
 " @section Usage, usage

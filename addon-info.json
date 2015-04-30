@@ -2,6 +2,5 @@
   "description": "Generic coverage reporter.",
   "dependencies": {
     "maktaba": {"type": "git", "url": "git://github.com/google/vim-maktaba"},
-    "coveragelib": {}
   }
 }
