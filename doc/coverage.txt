@@ -1,16 +1,16 @@
-*vim-coverage.txt*	Generic coverage reporter.
-                                                     *Coverage* *vim-coverage*
+*coverage.txt*	Generic coverage reporter.
+                                                         *Coverage* *coverage*
 
 ==============================================================================
-CONTENTS                                               *vim-coverage-contents*
-  1. Introduction.........................................|vim-coverage-intro|
-  2. Usage................................................|vim-coverage-usage|
-  3. Configuration.......................................|vim-coverage-config|
-  4. Commands..........................................|vim-coverage-commands|
-  5. Functions........................................|vim-coverage-functions|
+CONTENTS                                                   *coverage-contents*
+  1. Introduction.............................................|coverage-intro|
+  2. Usage....................................................|coverage-usage|
+  3. Configuration...........................................|coverage-config|
+  4. Commands..............................................|coverage-commands|
+  5. Functions............................................|coverage-functions|
 
 ==============================================================================
-INTRODUCTION                                              *vim-coverage-intro*
+INTRODUCTION                                                  *coverage-intro*
 
 Coverage is a generic vim coverage layer plugin. It depends upon |Maktaba|.
 
@@ -27,7 +27,7 @@ Coverage report uses three colors:
 See more about branch coverage on http://en.wikipedia.org/wiki/Code_coverage
 
 ==============================================================================
-USAGE                                                     *vim-coverage-usage*
+USAGE                                                         *coverage-usage*
 
 
 To use this plugin, you need at least one coverage provider registered with
@@ -52,58 +52,58 @@ mapping of "<Leader>Ct", add the following to your vimrc:
 <
 
 ==============================================================================
-CONFIGURATION                                            *vim-coverage-config*
+CONFIGURATION                                                *coverage-config*
 
 This plugin uses maktaba flags for configuration. Install Glaive
 (https://github.com/google/glaive) and use the |:Glaive| command to configure
 them.
 
-                                                   *vim-coverage:partial_text*
+                                                       *coverage:partial_text*
 Text shown on the sign of a partially-covered line (e.g. unexplored branch).
 Default: '☇☇' `
 
-                                                 *vim-coverage:uncovered_text*
+                                                     *coverage:uncovered_text*
 Text shown on the sign of a noncovered line (left of the line, in the corner).
 Default: '⚡⚡' `
 
-                                                   *vim-coverage:covered_text*
+                                                       *coverage:covered_text*
 Text shown on the sign of a covered line (left of the line, in the corner).
 Default: '✓✓' `
 
-                                                *vim-coverage:partial_ctermbg*
+                                                    *coverage:partial_ctermbg*
 Color for the partially covered lines when in cterm mode (non-GUI).
 Default: 'yellow' `
 
-                                                  *vim-coverage:partial_guibg*
+                                                      *coverage:partial_guibg*
 Color for the partially covered lines when in GUI mode (e.g. gvim).
 Default: 'yellow' `
 
-                                                *vim-coverage:covered_ctermbg*
+                                                    *coverage:covered_ctermbg*
 Color for the covered lines when in cterm mode (non-GUI).
 Default: 'lightgreen' `
 
-                                                  *vim-coverage:covered_guibg*
+                                                      *coverage:covered_guibg*
 Color for the covered lines when in GUI mode (e.g. gvim).
 Default: 'green' `
 
-                                              *vim-coverage:uncovered_ctermbg*
+                                                  *coverage:uncovered_ctermbg*
 Color for the uncovered lines when in cterm mode (non-GUI).
 Default: 'lightred' `
 
-                                                *vim-coverage:uncovered_guibg*
+                                                    *coverage:uncovered_guibg*
 Color for the uncovered lines when in GUI mode (e.g. gvim).
 Default: 'red' `
 
-                                               *vim-coverage:plugin[commands]*
+                                                   *coverage:plugin[commands]*
 Configures whether plugin/commands.vim should be loaded.
 Default: 1 `
 
-                                               *vim-coverage:plugin[mappings]*
+                                                   *coverage:plugin[mappings]*
 Configures whether plugin/mappings.vim should be loaded.
 Default: 0 `
 
 ==============================================================================
-COMMANDS                                               *vim-coverage-commands*
+COMMANDS                                                   *coverage-commands*
 
 For toggling coverage view, the <PREFIX>t mapping is set. To automatically
 render coverage for available file types, create an autocmd, e.g.:
@@ -133,7 +133,7 @@ This will render coverage for all mentioned filetypes, if available.
   Print formatted stats, e.g. Coverage 88% (22/25 lines).
 
 ==============================================================================
-FUNCTIONS                                             *vim-coverage-functions*
+FUNCTIONS                                                 *coverage-functions*
 
 coverage#CreateReport({covered}, {uncovered}, {partial}, [extra_dict])
                                                      *coverage#CreateReport()*
