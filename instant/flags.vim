@@ -55,7 +55,7 @@
 " You can define a mapping to toggle showing coverage report. To use the default
 " mapping of "<Leader>Ct", add the following to your vimrc:
 " >
-"   Glug coverage plugin[mappings]
+"   Glaive coverage plugin[mappings]
 " <
 
 let [s:plugin, s:enter] = maktaba#plugin#Enter(expand('<sfile>:p'))
