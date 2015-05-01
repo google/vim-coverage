@@ -236,8 +236,8 @@ endfunction
 
 ""
 " Caches the {coverage} for the {filename} and renders it. This can be used as a
-" callback entry for asynchonous calls. {coverage} format is as described in the
-" general help for this plugin.
+" callback entry for asynchronous calls. {coverage} format is as described in
+" the general help for this plugin.
 function! coverage#CacheAndShow(filename, coverage) abort
   let s:cache[a:filename] = a:coverage
   if !has_key(a:coverage, 'diff_path')
