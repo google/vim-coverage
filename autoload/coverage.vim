@@ -239,6 +239,9 @@ endfunction
 " callback entry for asynchronous calls. {coverage} format is as described in
 " the general help for this plugin.
 function! coverage#CacheAndShow(filename, coverage) abort
+  if !maktaba#value#IsDict(a:coverage)
+    return
+  endif
   let s:cache[a:filename] = a:coverage
   if !has_key(a:coverage, 'diff_path')
     call s:RenderFromCache(a:filename)
