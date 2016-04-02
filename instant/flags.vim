@@ -67,15 +67,15 @@ endif
 
 ""
 " Text shown on the sign of a partially-covered line (e.g. unexplored branch).
-call s:plugin.Flag('partial_text', '☇☇')
+call s:plugin.Flag('partial_text', '◊◊')
 
 ""
 " Text shown on the sign of a noncovered line (left of the line, in the corner).
-call s:plugin.Flag('uncovered_text', '✗✗')
+call s:plugin.Flag('uncovered_text', '▵▵')
 
 ""
 " Text shown on the sign of a covered line (left of the line, in the corner).
-call s:plugin.Flag('covered_text', '✓✓')
+call s:plugin.Flag('covered_text', '▴▴')
 
 ""
 " Background color for the partially covered lines when in cterm mode (non-GUI).
