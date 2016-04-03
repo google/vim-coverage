@@ -78,25 +78,49 @@ call s:plugin.Flag('uncovered_text', '▵▵')
 call s:plugin.Flag('covered_text', '▴▴')
 
 ""
-" Color for the partially covered lines when in cterm mode (non-GUI).
+" Background color for the partially covered lines when in cterm mode (non-GUI).
 call s:plugin.Flag('partial_ctermbg', 'yellow')
 
 ""
-" Color for the partially covered lines when in GUI mode (e.g. gvim).
+" Text color for the partially covered lines when in cterm mode (non-GUI).
+call s:plugin.Flag('partial_ctermfg', 'black')
+
+""
+" Background color for the partially covered lines when in GUI mode (e.g. gvim).
 call s:plugin.Flag('partial_guibg', 'yellow')
 
 ""
-" Color for the covered lines when in cterm mode (non-GUI).
+" Text color for the partially covered lines when in GUI mode (e.g. gvim).
+call s:plugin.Flag('partial_guifg', 'black')
+
+""
+" Background color for the covered lines when in cterm mode (non-GUI).
 call s:plugin.Flag('covered_ctermbg', 'lightgreen')
 
 ""
-" Color for the covered lines when in GUI mode (e.g. gvim).
+" Text color for the covered lines when in cterm mode (non-GUI).
+call s:plugin.Flag('covered_ctermfg', 'black')
+
+""
+" Background color for the covered lines when in GUI mode (e.g. gvim).
 call s:plugin.Flag('covered_guibg', 'green')
 
 ""
-" Color for the uncovered lines when in cterm mode (non-GUI).
-call s:plugin.Flag('uncovered_ctermbg', 'lightred')
+" Text color for the covered lines when in GUI mode (e.g. gvim).
+call s:plugin.Flag('covered_guifg', 'black')
 
 ""
-" Color for the uncovered lines when in GUI mode (e.g. gvim).
+" Background color for the uncovered lines when in cterm mode (non-GUI).
+call s:plugin.Flag('uncovered_ctermbg', 'red')
+
+""
+" Text color for the uncovered lines when in cterm mode (non-GUI).
+call s:plugin.Flag('uncovered_ctermfg', 'white')
+
+""
+" Background color for the uncovered lines when in GUI mode (e.g. gvim).
 call s:plugin.Flag('uncovered_guibg', 'red')
+
+""
+" Text color for the uncovered lines when in GUI mode (e.g. gvim).
+call s:plugin.Flag('uncovered_guifg', 'white')

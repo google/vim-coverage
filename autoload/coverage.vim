@@ -50,7 +50,9 @@ function! s:DefineHighlighting() abort
     for l:state in s:coverage_states
       execute 'highlight coverage_' . l:state .
           \ ' ctermbg=' . s:plugin.Flag(l:state . '_ctermbg') .
-          \ ' guibg=' . s:plugin.Flag(l:state . '_guibg')
+          \ ' ctermfg=' . s:plugin.Flag(l:state . '_ctermfg') .
+          \ ' guibg=' . s:plugin.Flag(l:state . '_guibg') .
+          \ ' guifg=' . s:plugin.Flag(l:state . '_guifg')
       execute 'sign define sign_' . l:state . ' text=' .
           \ s:plugin.Flag(l:state . '_text') . ' texthl=coverage_' . l:state
     endfor

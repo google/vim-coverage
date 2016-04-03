@@ -71,28 +71,52 @@ Text shown on the sign of a covered line (left of the line, in the corner).
 Default: '✓✓' `
 
                                                     *coverage:partial_ctermbg*
-Color for the partially covered lines when in cterm mode (non-GUI).
+Background color for the partially covered lines when in cterm mode (non-GUI).
 Default: 'yellow' `
+
+                                                    *coverage:partial_ctermfg*
+Text color for the partially covered lines when in cterm mode (non-GUI).
+Default: 'black' `
 
                                                       *coverage:partial_guibg*
-Color for the partially covered lines when in GUI mode (e.g. gvim).
+Background color for the partially covered lines when in GUI mode (e.g. gvim).
 Default: 'yellow' `
 
-                                                    *coverage:covered_ctermbg*
-Color for the covered lines when in cterm mode (non-GUI).
-Default: 'lightgreen' `
+                                                      *coverage:partial_guifg*
+Text color for the partially covered lines when in GUI mode (e.g. gvim).
+Default: 'black' `
 
-                                                      *coverage:covered_guibg*
-Color for the covered lines when in GUI mode (e.g. gvim).
+                                                    *coverage:covered_ctermbg*
+Background color for the covered lines when in cterm mode (non-GUI).
 Default: 'green' `
 
+                                                    *coverage:covered_ctermfg*
+Text color for the covered lines when in cterm mode (non-GUI).
+Default: 'black' `
+
+                                                      *coverage:covered_guibg*
+Background color for the covered lines when in GUI mode (e.g. gvim).
+Default: 'green' `
+
+                                                      *coverage:covered_guifg*
+Text color for the covered lines when in GUI mode (e.g. gvim).
+Default: 'black' `
+
                                                   *coverage:uncovered_ctermbg*
-Color for the uncovered lines when in cterm mode (non-GUI).
-Default: 'lightred' `
+Background color for the uncovered lines when in cterm mode (non-GUI).
+Default: 'red' `
+
+                                                  *coverage:uncovered_ctermfg*
+Text color for the uncovered lines when in cterm mode (non-GUI).
+Default: 'white' `
 
                                                     *coverage:uncovered_guibg*
-Color for the uncovered lines when in GUI mode (e.g. gvim).
+Background color for the uncovered lines when in GUI mode (e.g. gvim).
 Default: 'red' `
+
+                                                    *coverage:uncovered_guifg*
+Text color for the uncovered lines when in GUI mode (e.g. gvim).
+Default: 'white' `
 
                                                    *coverage:plugin[commands]*
 Configures whether plugin/commands.vim should be loaded.
