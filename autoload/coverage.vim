@@ -300,4 +300,20 @@ function! coverage#CompletionList(arg, line, pos) abort
   return filter(l:providers, "maktaba#string#StartsWith(v:val, a:arg)")
 endfunction
 
+""
+" Makes sure the coverage {provider} is a valid provider for the plugin.
+" @throws BadValue if the provider is not valid.
+function! coverage#EnsureProvider(provider) abort
+  let l:required_fields = ['name', 'IsAvailable', 'GetCoverage']
+  " Throw BadValue if any required fields are missing.
+  let l:missing_fields =
+      \ filter(copy(l:required_fields), '!has_key(a:provider, v:val)')
+  if !empty(l:missing_fields)
+    throw maktaba#error#BadValue(
+        \ 'Provider is missing fields: %s. Got: %s',
+        \ join(l:missing_fields, ', '),
+        \ string(a:provider))
+  endif
+endfunction
+
 "}}}
