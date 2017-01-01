@@ -7,8 +7,6 @@ work properly under vroom.
 
   :let g:repo = fnamemodify($VROOMFILE, ':p:h:h:h')
   :source $VROOMDIR/setupvroom.vim
-  :let g:fixturepath = maktaba#path#Join([
-  |fnamemodify($VROOMFILE, ':p:h'), 'fixture1', 'google3'])
 
 The coverage plugin provides a :CoverageShow command that calls the coverage
 provider and renders the coverage, if available. Let's first create and register
@@ -35,10 +33,10 @@ a fake coverage provider.
   |      'GetCoverage': function('TestGetCoverage'),
   |      'IsAvailable': function('TestIsAvailable')})
 
-  :exe 'silent edit ' . g:fixturepath . '/dummy.python'
+  :silent edit $VROOMDIR/testdata/dummy.py
   :CoverageShow test_coverage_provider
   ~ Coverage is 50.00% (7/14 lines).
-  :exe 'silent file foo.unrecognized'
+  :silent file foo.unrecognized
   :CoverageShow test_coverage_provider
   ~ Error rendering coverage: ERROR\(NotFound\): Provider (regex)
   | test_coverage_provider is not available for file .*foo.unrecognized
