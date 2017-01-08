@@ -1,0 +1,37 @@
+This file demonstrates the coverage.py integration for python.
+
+In order for these tests to work, maktaba MUST be in the same parent directory
+as coverage. Given that that's the case, all we have to do is source the
+setupvroom.vim file, which bootstraps the coverage plugin and configures it to
+work properly under vroom.
+
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h:h')
+  :source $VROOMDIR/setupvroom.vim
+
+NOTE: These tests also require python's coverage module to be installed (the
+python-coverage package on Debian-based systems). If it's not installed, vroom
+will fail to run this file, failing with an error like
+"Couldn't import python coverage module".
+
+Coverage.py coverage reports are stored in .coverage files, typically generated
+in the project root directory by running something like
+"nosetests --with-coverage". With that in place, the :CoverageShow command will
+surface the coverage results inside your vim editor.
+
+  :let g:tmpdir = tempname()
+  :call mkdir(g:tmpdir)
+  :execute 'cd' g:tmpdir
+  :silent edit blah.py
+  :setf python
+  % import sys<CR>
+  |if False:<CR>
+  |  print("If you can read this...")<CR>
+  |  print("...your False is broken")<CR>
+  |sys.exit(0)<CR>
+  |print("Are you still here?!")
+  :silent write
+
+  :call WriteFakeCoveragePyFile(g:tmpdir, {'blah.py': [1, 2, 5]})
+
+  :CoverageShow coverage.py
+  ~ Coverage is 50.00% (3/6 lines).
