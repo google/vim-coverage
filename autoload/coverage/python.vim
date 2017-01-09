@@ -25,6 +25,14 @@ function! s:GetCoverageFile() abort
   return fnamemodify(findfile('.coverage', ';'), ':p')
 endfunction
 
+" Polyfill for vim's pyeval().
+function! s:PyEval(expr) abort
+  if exists('*pyeval')
+    return pyeval(a:expr)
+  endif
+  python import json, vim
+  python vim.command('return ' + json.dumps(eval(vim.eval('a:expr'))))
+endfunction
 
 function! coverage#python#GetCoveragePyProvider() abort
   let l:provider = {
@@ -50,7 +58,7 @@ function! coverage#python#GetCoveragePyProvider() abort
           \ 'Generate one by running nosetests --with-coverage')
     endif
     call maktaba#python#ImportModule(s:plugin, 'vim_coverage')
-    let l:coverage_data = pyeval(printf(
+    let l:coverage_data = s:PyEval(printf(
         \ 'vim_coverage.GetCoveragePyLines(%s, %s)',
         \ string(l:cov_file),
         \ string(a:filename)))
