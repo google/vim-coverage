@@ -14,3 +14,5 @@ endif
 
 let s:registry = s:plugin.GetExtensionRegistry()
 call s:registry.SetValidator('coverage#EnsureProvider')
+
+call s:registry.AddExtension(coverage#python#GetCoveragePyProvider())

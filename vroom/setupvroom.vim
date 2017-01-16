@@ -28,3 +28,19 @@ call maktaba#plugin#Get('coverage').Load()
 
 " Support vroom's fake shell executable and don't try to override it to sh.
 call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
+
+function WriteFakeCoveragePyFile(path, lines_by_file) abort
+  python <<EOF
+import vim, os.path, coverage
+cov = coverage.CoverageData()
+path = vim.eval('a:path')
+line_data_dict = {}
+for filename, lines in vim.eval('a:lines_by_file').items():
+  absolute_path = os.path.join(path, filename)
+  # Transform [LINE_NUM, ...] to {LINE_NUM: None, ...} because that's the form
+  # add_line_data expects.
+  line_data_dict[absolute_path] = {int(l): None for l in lines}
+cov.add_line_data(line_data_dict)
+cov.write_file(os.path.join(path, '.coverage'))
+EOF
+endfunction
