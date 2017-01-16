@@ -34,9 +34,13 @@ function WriteFakeCoveragePyFile(path, lines_by_file) abort
 import vim, os.path, coverage
 cov = coverage.CoverageData()
 path = vim.eval('a:path')
-cov.add_line_data({
-  os.path.join(path, filename): {int(l): None for l in lines}
-  for filename, lines in vim.eval('a:lines_by_file').items()})
+line_data_dict = {}
+for filename, lines in vim.eval('a:lines_by_file').items():
+  absolute_path = os.path.join(path, filename)
+  # Transform [LINE_NUM, ...] to {LINE_NUM: None, ...} because that's the form
+  # add_line_data expects.
+  line_data_dict[absolute_path] = {int(l): None for l in lines}
+cov.add_line_data(line_data_dict)
 cov.write_file(os.path.join(path, '.coverage'))
 EOF
 endfunction

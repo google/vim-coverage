@@ -1,4 +1,4 @@
-" Copyright 2014 Google Inc. All rights reserved.
+" Copyright 2017 Google Inc. All rights reserved.
 "
 " Licensed under the Apache License, Version 2.0 (the "License");
 " you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ function! s:GetCoverageFile() abort
 endfunction
 
 " Polyfill for vim's pyeval().
+" TODO(google/vim-maktaba#70): Use maktaba's implementation when available.
 function! s:PyEval(expr) abort
   if exists('*pyeval')
     return pyeval(a:expr)
@@ -67,13 +68,6 @@ function! coverage#python#GetCoveragePyProvider() abort
   endfunction
 
   return l:provider
-endfunction
-
-"}}}
-
-"{{{ helpers
-
-function! coverage#python#SetBufferCoverageFileForTesting(...) abort
 endfunction
 
 "}}}
