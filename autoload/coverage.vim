@@ -295,7 +295,7 @@ function! coverage#CompletionList(arg, line, pos) abort
   for l:extension in s:registry.GetExtensions()
     call add(l:providers, l:extension.name)
   endfor
-  return filter(l:providers, "maktaba#string#StartsWith(v:val, a:arg)")
+  return filter(l:providers, 'maktaba#string#StartsWith(v:val, a:arg)')
 endfunction
 
 ""
