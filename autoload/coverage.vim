@@ -125,18 +125,16 @@ endfunction
 function! s:CoverageShowDiff() abort
   let l:filename = expand('%:p')
   if has_key(s:cache, l:filename)
-    if has_key(s:cache, l:filename)
-      let l:data = s:cache[l:filename]
-      if has_key(l:data, 'diff_path')
-        " Current file has changed, so split into diff mode with the file at the
-        " point where the coverage is known, and render it there, in the split.
-        execute 'vertical' 'diffsplit' l:data.diff_path
-        call s:RenderFromCache(l:filename)
-      else
-        call maktaba#error#Warn('There is no diff.')
-      endif
+    let l:data = s:cache[l:filename]
+    if has_key(l:data, 'diff_path')
+      " Current file has changed, so split into diff mode with the file at the
+      " point where the coverage is known, and render it there, in the split.
+      execute 'vertical' 'diffsplit' l:data.diff_path
+      call s:RenderFromCache(l:filename)
+    else
+      call maktaba#error#Warn('There is no diff.')
     endif
-  endif
+    endif
 endfunction
 
 
