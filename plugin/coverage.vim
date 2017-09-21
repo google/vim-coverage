@@ -4,9 +4,9 @@ if !s:enter
 endif
 
 
-" Require maktaba 1.9.0 or later for maktaba#extension support.
-if !maktaba#IsAtLeastVersion('1.9.0')
-  call maktaba#error#Shout('Coverage requires maktaba version 1.9.0.')
+" Require maktaba 1.12.0 or later for maktaba#python#Eval support.
+if !maktaba#IsAtLeastVersion('1.12.0')
+  call maktaba#error#Shout('Coverage requires maktaba version 1.12.0.')
   call maktaba#error#Shout('You have maktaba version %s.', maktaba#VERSION)
   call maktaba#error#Shout('Please update your maktaba install.')
 endif
