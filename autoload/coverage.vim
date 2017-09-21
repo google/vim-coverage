@@ -166,10 +166,13 @@ function! coverage#CreateReport(covered, uncovered, partial, ...) abort
   if a:0 > 0
     let l:extra_dict = maktaba#ensure#IsDict(a:1)
   endif
+  call maktaba#ensure#IsList(a:covered)
+  call maktaba#ensure#IsList(a:uncovered)
+  call maktaba#ensure#IsList(a:partial)
   return extend(l:extra_dict,
-      \ {'covered': maktaba#ensure#IsList(a:covered),
-      \ 'uncovered': maktaba#ensure#IsList(a:uncovered),
-      \ 'partial': maktaba#ensure#IsList(a:partial)})
+      \ {'covered': a:covered,
+      \ 'uncovered': a:uncovered,
+      \ 'partial': a:partial})
 endfunction
 
 
