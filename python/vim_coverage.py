@@ -33,10 +33,5 @@ def GetCoveragePyLines(path, source_file):
     cov.load()
   finally:
     os.chdir(prev_cwd)
-  try:
-    # Coverage.py 4.0 and higher.
-    covered_lines = cov.data.lines(source_file)
-  except TypeError:
-    covered_lines = cov.data.line_data()[source_file]
-  uncovered_lines = cov.analysis(source_file)[2]
-  return (covered_lines, uncovered_lines)
+  statements, missing = cov.analysis(source_file)[1:3]
+  return (statements, missing)
