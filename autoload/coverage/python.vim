@@ -41,8 +41,8 @@ function! coverage#python#GetCoveragePyProvider() abort
         call maktaba#python#ImportModule(s:plugin, 'vim_coverage')
       catch /ERROR.*/
           throw maktaba#error#NotFound(
-              \ "Couldn't import Python coverage module (".v:exception.'). ' .
-              \ 'Install the coverage package and try again.')
+              \ "Couldn't import Python coverage module (%s). " .
+              \ 'Install the coverage package and try again.', v:exception)
       endtry
       let s:imported_python = 1
     endif
