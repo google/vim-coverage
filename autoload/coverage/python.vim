@@ -25,6 +25,8 @@ function! s:GetCoverageFile() abort
   return fnamemodify(findfile('.coverage', ';'), ':p')
 endfunction
 
+let s:imported_python = 0
+
 function! coverage#python#GetCoveragePyProvider() abort
   let l:provider = {
       \ 'name': 'coverage.py'}
@@ -34,21 +36,22 @@ function! coverage#python#GetCoveragePyProvider() abort
   endfunction
 
   function l:provider.GetCoverage(filename) abort
-    " Check coverage is importable and show a clear error otherwise.
-    try
-      python import coverage
-    catch /Vim(python):/
-      throw maktaba#error#NotFound(
-          \ "Couldn't import python coverage module. " .
-          \ 'Install coverage and try again.')
-    endtry
+    if !s:imported_python
+      try
+        call maktaba#python#ImportModule(s:plugin, 'vim_coverage')
+      catch /ERROR.*/
+          throw maktaba#error#NotFound(
+              \ "Couldn't import Python coverage module (%s). " .
+              \ 'Install the coverage package and try again.', v:exception)
+      endtry
+      let s:imported_python = 1
+    endif
     let l:cov_file = s:GetCoverageFile()
     if empty(l:cov_file)
       throw maktaba#error#NotFound(
           \ 'No .coverage file found. ' .
           \ 'Generate one by running nosetests --with-coverage')
     endif
-    call maktaba#python#ImportModule(s:plugin, 'vim_coverage')
     let l:coverage_data = maktaba#python#Eval(printf(
         \ 'vim_coverage.GetCoveragePyLines(%s, %s)',
         \ string(l:cov_file),
