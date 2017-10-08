@@ -111,11 +111,11 @@ function! s:CoverageShow(...) abort
     if (has_key(s:cache, l:filename))
       call s:RenderFromCache(l:filename)
     else
-    if a:0 > 0
-      call coverage#ShowCoverage(maktaba#ensure#IsString(a:1))
-    else
-      call coverage#ShowCoverage()
-    endif
+      if a:0 > 0
+        call coverage#ShowCoverage(maktaba#ensure#IsString(a:1))
+      else
+        call coverage#ShowCoverage()
+      endif
     endif
   endif
 endfunction
