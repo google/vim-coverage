@@ -144,14 +144,23 @@ endfunction
 function! coverage#GetFormattedStats(filename) abort
   if has_key(s:cache, a:filename)
     let l:data = s:cache[a:filename]
-    let l:stats = {'total': 0}
-    for l:state in s:coverage_states
-      let l:stats[l:state] = len(l:data[l:state])
-      let l:stats['total'] += len(l:data[l:state])
-    endfor
-    let l:percentage = 100.0 * l:stats.covered / l:stats.total
-    return printf('Coverage is %.2f%% (%d/%d lines).',
-          \ l:percentage, l:stats.covered, l:stats.total)
+    if has_key(l:data, 'stats')
+      let l:stats = l:data.stats
+    else
+      let l:stats = {'total': 0}
+      for l:state in s:coverage_states
+        let l:stats[l:state] = len(l:data[l:state])
+        let l:stats['total'] += len(l:data[l:state])
+      endfor
+      if has_key(l:data, 'percentage')
+        let l:stats.percentage = printf('%s%%', l:data.percentage)
+      else
+        let l:stats.percentage = printf('%.2f%%', 100.0 * l:stats.covered / l:stats.total)
+      endif
+      let l:data['stats'] = l:stats
+    endif
+    return printf('Coverage is %s (%d/%d lines (%d partial)).',
+          \ l:stats.percentage, l:stats.covered, l:stats.total, l:stats.partial)
   endif
 endfunction
 

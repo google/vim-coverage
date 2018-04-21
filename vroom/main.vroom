@@ -35,7 +35,7 @@ a fake coverage provider.
 
   :silent edit $VROOMDIR/testdata/dummy.py
   :CoverageShow test_coverage_provider
-  ~ Coverage is 50.00% (7/14 lines).
+  ~ Coverage is 50.00% (7/14 lines (0 partial)).
   :silent file foo.unrecognized
   :CoverageShow test_coverage_provider
   ~ Error rendering coverage: ERROR\(NotFound\): Provider (regex)
