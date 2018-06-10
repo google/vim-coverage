@@ -19,7 +19,9 @@ import coverage
 
 
 def GetCoveragePyLines(path, source_file):
-  """Get (covered, uncovered) lines for source_file from .coverage file at path.
+  """Get coverage information for source_file from .coverage file at path.
+
+  Returns (covered, uncovered, partial, percentage).
   """
   prev_cwd = os.getcwd()
   source_file = os.path.abspath(source_file)
@@ -39,4 +41,10 @@ def GetCoveragePyLines(path, source_file):
   except TypeError:
     covered_lines = cov.data.line_data()[source_file]
   uncovered_lines = cov.analysis(source_file)[2]
-  return (covered_lines, uncovered_lines)
+
+  analysis = cov._analyze(source_file)
+  partial = list(analysis.missing_branch_arcs().keys())
+
+  percentage = analysis.numbers.pc_covered_str
+
+  return (covered_lines, uncovered_lines, partial, percentage)

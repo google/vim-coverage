@@ -56,8 +56,10 @@ function! coverage#python#GetCoveragePyProvider() abort
         \ 'vim_coverage.GetCoveragePyLines(%s, %s)',
         \ string(l:cov_file),
         \ string(a:filename)))
-    let [l:covered_lines, l:uncovered_lines] = l:coverage_data
-    return coverage#CreateReport(l:covered_lines, l:uncovered_lines, [])
+    let [l:covered_lines, l:uncovered_lines, l:partial_lines, l:percentage]
+          \ = l:coverage_data
+    return coverage#CreateReport(l:covered_lines, l:uncovered_lines, l:partial_lines,
+          \ {'percentage': l:percentage})
   endfunction
 
   return l:provider

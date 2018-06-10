@@ -34,4 +34,4 @@ surface the coverage results inside your vim editor.
   :call WriteFakeCoveragePyFile(g:tmpdir, {'blah.py': [1, 2, 5]})
 
   :CoverageShow coverage.py
-  ~ Coverage is 50.00% (3/6 lines).
+  ~ Coverage is 50% (3/6 lines (1 partial)).
