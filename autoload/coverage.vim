@@ -121,24 +121,6 @@ function! s:CoverageShow(...) abort
 endfunction
 
 ""
-" Shows coverage in vimdiff with the version coverage was known for.
-function! s:CoverageShowDiff() abort
-  let l:filename = expand('%:p')
-  if has_key(s:cache, l:filename)
-    let l:data = s:cache[l:filename]
-    if has_key(l:data, 'diff_path')
-      " Current file has changed, so split into diff mode with the file at the
-      " point where the coverage is known, and render it there, in the split.
-      execute 'vertical' 'diffsplit' l:data.diff_path
-      call s:RenderFromCache(l:filename)
-    else
-      call maktaba#error#Warn('There is no diff.')
-    endif
-    endif
-endfunction
-
-
-""
 " Calculates coverage stats from @dict(s:cache), and returns the stats for the
 " requested {filename}. Does not get the coverage stats.
 function! coverage#GetFormattedStats(filename) abort
@@ -246,9 +228,7 @@ function! coverage#CacheAndShow(filename, coverage) abort
     return
   endif
   let s:cache[a:filename] = a:coverage
-  if !has_key(a:coverage, 'diff_path')
-    call s:RenderFromCache(a:filename)
-  endif
+  call s:RenderFromCache(a:filename)
 endfunction
 
 "}}}
@@ -266,14 +246,6 @@ function! coverage#Show(...) abort
     else
       call s:CoverageShow()
     endif
-  catch /ERROR.*/
-    call maktaba#error#Shout('Error rendering coverage: %s', v:exception)
-  endtry
-endfunction
-
-function! coverage#ShowDiff() abort
-  try
-    call s:CoverageShowDiff()
   catch /ERROR.*/
     call maktaba#error#Shout('Error rendering coverage: %s', v:exception)
   endtry

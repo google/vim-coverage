@@ -151,9 +151,6 @@ This will render coverage for all mentioned filetypes, if available.
 :CoverageToggle                                              *:CoverageToggle*
   Toggle coverage report.
 
-:CoverageShowDiff                                          *:CoverageShowDiff*
-  Show coverage report when the file changed, using vimdiff.
-
 :CoverageHide                                                  *:CoverageHide*
   Hide coverage report.
 
