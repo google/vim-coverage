@@ -39,4 +39,4 @@ def GetCoveragePyLines(path, source_file):
   except TypeError:
     covered_lines = cov.data.line_data()[source_file]
   uncovered_lines = cov.analysis(source_file)[2]
-  return (covered_lines, uncovered_lines)
+  return (covered_lines or [], uncovered_lines)
