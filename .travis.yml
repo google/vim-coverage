@@ -33,6 +33,7 @@ script:
   - if [ -z "$COVERAGEPY" ]; then
       python-coverage --version;
     else
+      which coverage;
       coverage --version;
     fi
   - '[ $CI_TARGET = neovim ] && VROOM_ARGS="--neovim" || VROOM_ARGS=""'
