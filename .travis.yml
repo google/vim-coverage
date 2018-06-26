@@ -6,7 +6,7 @@ env:
     - CI_TARGET=vim MAKTABA_VERSION=1.14.0
     - CI_TARGET=vim MAKTABA_VERSION=master
     - CI_TARGET=neovim MAKTABA_VERSION=master
-    - CI_TARGET=vim MAKTABA_VERSION=master COVERAGEPY="coverage>4<5"
+    - CI_TARGET=vim MAKTABA_VERSION=master COVERAGEPY="coverage>4,<5"
 before_script:
   - sudo apt-get update
   - sudo apt-get install python3-dev
