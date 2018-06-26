@@ -14,8 +14,7 @@ before_script:
       sudo apt-get install python-coverage3;
     else
       wget https://bootstrap.pypa.io/get-pip.py &&
-      sudo python3 get-pip.py &&
-      sudo pip3 install "$COVERAGEPY";
+      pip install --user "$COVERAGEPY";
     fi
   - if [ $CI_TARGET = vim ]; then
       sudo apt-get install vim-gnome;
