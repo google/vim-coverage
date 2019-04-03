@@ -34,9 +34,14 @@ def GetCoveragePyLines(path, source_file):
   finally:
     os.chdir(prev_cwd)
   try:
+    data = cov.get_data()
+  except AttributeError:
+    # Coverage.py before 5.
+    data = cov.data
+  try:
     # Coverage.py 4.0 and higher.
-    covered_lines = cov.data.lines(source_file)
+    covered_lines = data.lines(source_file)
   except TypeError:
-    covered_lines = cov.data.line_data()[source_file]
+    covered_lines = data.line_data()[source_file]
   uncovered_lines = cov.analysis(source_file)[2]
   return (covered_lines or [], uncovered_lines)
