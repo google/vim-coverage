@@ -24,7 +24,7 @@ surface the coverage results inside your vim editor.
   :silent edit blah.py
   :setf python
   % import sys<CR>
-  |if False:<CR>
+  |if 1 == 0:<CR>
   |  print("If you can read this...")<CR>
   |  print("...your False is broken")<CR>
   |sys.exit(0)<CR>
