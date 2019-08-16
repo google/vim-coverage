@@ -30,7 +30,8 @@ call maktaba#plugin#Get('coverage').Load()
 call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
 
 function WriteFakeCoveragePyFile(path, lines_by_file) abort
-  python <<EOF
+  let l:python_command = has('python3') ? 'python3' : 'python'
+  execute l:python_command '<< EOF'
 import vim, os.path, coverage
 cov = coverage.CoverageData()
 path = vim.eval('a:path')
@@ -38,9 +39,13 @@ line_data_dict = {}
 for filename, lines in vim.eval('a:lines_by_file').items():
   absolute_path = os.path.join(path, filename)
   # Transform [LINE_NUM, ...] to {LINE_NUM: None, ...} because that's the form
-  # add_line_data expects.
+  # add_lines expects.
   line_data_dict[absolute_path] = {int(l): None for l in lines}
-cov.add_line_data(line_data_dict)
+# Coverage.py 4.0 and higher.
+if hasattr(cov, 'add_lines'):
+  cov.add_lines(line_data_dict)
+else:
+  cov.add_line_data(line_data_dict)
 cov.write_file(os.path.join(path, '.coverage'))
 EOF
 endfunction

@@ -1,23 +1,24 @@
 language: generic
 env:
   matrix:
-    # This Maktaba version should match the requirement in plugin/coverage.vim.
-    - CI_TARGET=vim MAKTABA_VERSION=1.12.0
+    # The requirement in plugin/coverage.vim is older, but testing in python3
+    # environments requires maktaba python3 support added in 1.14.0.
+    - CI_TARGET=vim MAKTABA_VERSION=1.14.0
     - CI_TARGET=vim MAKTABA_VERSION=master
     - CI_TARGET=neovim MAKTABA_VERSION=master
 before_script:
   - sudo apt-get update
-  - sudo apt-get install python3-dev python-coverage
+  - sudo apt-get install python3-dev python3-coverage
   - if [ $CI_TARGET = vim ]; then
       sudo apt-get install vim-gnome;
     elif [ $CI_TARGET = neovim ]; then
       eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64" &&
       wget https://bootstrap.pypa.io/get-pip.py &&
-      sudo python3 get-pip.py --allow-external sudo &&
+      sudo python3 get-pip.py &&
       sudo pip3 install neovim;
     fi
-  - wget https://github.com/google/vroom/releases/download/v0.12.0/vroom_0.12.0-1_all.deb
-  - sudo dpkg -i ./vroom_0.12.0-1_all.deb
+  - wget https://github.com/google/vroom/releases/download/v0.13.0/vroom_0.13.0-1_all.deb
+  - sudo dpkg -i ./vroom_0.13.0-1_all.deb
   - git clone -b ${MAKTABA_VERSION} https://github.com/google/vim-maktaba.git ../maktaba/
 services:
   - xvfb
