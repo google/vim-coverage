@@ -28,10 +28,6 @@ command -nargs=* -complete=customlist,coverage#CompletionList CoverageShow
 command -nargs=0 CoverageToggle call coverage#Toggle()
 
 ""
-" Show coverage report when the file changed, using vimdiff.
-command -nargs=0 CoverageShowDiff call coverage#ShowDiff()
-
-""
 " Hide coverage report.
 command -nargs=0 CoverageHide call coverage#Hide()
 
