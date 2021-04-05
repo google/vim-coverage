@@ -93,11 +93,11 @@ endfunction
 
 ""
 " Toggles coverage layer.
-function! s:CoverageToggle() abort
+function! s:CoverageToggle(skip_cache) abort
   if has_key(s:visible, expand('%:p'))
     call s:CoverageHide()
   else
-    call s:CoverageShow()
+    call s:CoverageShow(a:skip_cache)
   endif
 endfunction
 
@@ -105,19 +105,29 @@ endfunction
 ""
 " Shows coverage layer. If [explicit_provider] is set, it will be used for
 " fetching the coverage data.
-function! s:CoverageShow(...) abort
+function! s:CoverageShow(skip_cache, ...) abort
   let l:filename = expand('%:p')
-  if !has_key(s:visible, l:filename)
-    if (has_key(s:cache, l:filename))
-      call s:RenderFromCache(l:filename)
+
+  if has_key(s:visible, l:filename)
+    if a:skip_cache
+      call s:CoverageHide()
     else
-      if a:0 > 0
-        call coverage#ShowCoverage(maktaba#ensure#IsString(a:1))
-      else
-        call coverage#ShowCoverage()
-      endif
+      " This file is already being shown, no need to re-show.
+      return
     endif
   endif
+
+  if has_key(s:cache, l:filename) && !a:skip_cache
+    call s:RenderFromCache(l:filename)
+    return
+  endif
+
+  if a:0 > 0
+    call coverage#ShowCoverage(maktaba#ensure#IsString(a:1))
+  else
+    call coverage#ShowCoverage()
+  endif
+
 endfunction
 
 ""
@@ -134,7 +144,7 @@ function! s:CoverageShowDiff() abort
     else
       call maktaba#error#Warn('There is no diff.')
     endif
-    endif
+  endif
 endfunction
 
 
@@ -255,16 +265,16 @@ endfunction
 
 "{{{ Misc
 
-function! coverage#Toggle() abort
-  call s:CoverageToggle()
+function! coverage#Toggle(skip_cache) abort
+  call s:CoverageToggle(a:skip_cache)
 endfunction
 
-function! coverage#Show(...) abort
+function! coverage#Show(skip_cache, ...) abort
   try
     if a:0 > 0
-      call s:CoverageShow(a:1)
+      call s:CoverageShow(a:skip_cache, a:1)
     else
-      call s:CoverageShow()
+      call s:CoverageShow(a:skip_cache)
     endif
   catch /ERROR.*/
     call maktaba#error#Shout('Error rendering coverage: %s', v:exception)

@@ -1,7 +1,16 @@
 This file demonstrates the basics of coverage usage.
 
 In order for these tests to work, maktaba MUST be in the same parent directory
-as coverage. Given that that's the case, all we have to do is source the
+as coverage.
+
+First, we need to work around for nvim prompting users to press enter.
+(See https://github.com/google/vim-codefmt/pull/131)
+
+  :if has('nvim')<CR>
+  |  set cmdheight=30<CR>
+  |endif<CR>
+
+Given that that's the case, all we have to do is source the
 setupvroom.vim file, which bootstraps the coverage plugin and configures it to
 work properly under vroom.
 
@@ -21,8 +30,13 @@ a fake coverage provider.
   : return a:file =~# '.*dummy.py'
   :endfunction
 
+  :let g:next_covered = 13
+  :let g:covered = [1, 3, 5, 7, 9, 11]
+
   :function TestGetCoverage(file)
-  : return {'covered': [1, 3, 5, 7, 9, 11, 13],
+  : let g:covered = add(g:covered, g:next_covered)
+  : let g:next_covered += 2
+  : return {'covered': g:covered,
   |     'uncovered': [2, 4, 6, 8, 10, 12, 14],
   |     'partial': []}
   :endfunction
@@ -34,8 +48,51 @@ a fake coverage provider.
   |      'IsAvailable': function('TestIsAvailable')})
 
   :silent edit $VROOMDIR/testdata/dummy.py
+
+Let's start with a simple test that shows that CoverageShow works.
+
   :CoverageShow test_coverage_provider
   ~ Coverage is 50.00% (7/14 lines).
+  :echom execute('sign place file='.$VROOMDIR.'/testdata/dummy.py')
+  ~ .*line=12\s+id=12\s+name=sign_uncovered.* (regex)
+  :echom execute('sign place file='.$VROOMDIR.'/testdata/dummy.py')
+  ~ .*line=13\s+id=13\s+name=sign_covered.* (regex)
+
+If we call it again, the result should be the same (because of the cache).
+
+  :CoverageShow
+  :CoverageStats
+  ~ Coverage is 50.00% (7/14 lines).
+  :echom execute('sign place file='.$VROOMDIR.'/testdata/dummy.py')
+  ~ .*line=14\s+id=14\s+name=sign_uncovered\s+priority=10$ (regex)
+
+If we use a bang, the cache should be ignored, and the result should change
+(TestGetCoverage should be called again, which adds another covered line to the
+list).
+
+  :CoverageShow!
+  ~ Coverage is 53.33% (8/15 lines).
+  :echom execute('sign place file='.$VROOMDIR.'/testdata/dummy.py')
+  ~ .*line=15\s+id=15\s+name=sign_covered.* (regex)
+
+Users should also be able to toggle coverage, which should cache the coverage
+while it's hidden:
+  :CoverageToggle
+  :CoverageToggle
+  :CoverageStats
+  ~ Coverage is 53.33% (8/15 lines).
+  :echom execute('sign place file='.$VROOMDIR.'/testdata/dummy.py')
+  ~ .*line=15\s+id=15\s+name=sign_covered\s+priority=10$ (regex)
+
+However, toggled coverage should not be cached if a bang is used:
+  :CoverageToggle
+  :CoverageToggle!
+  ~ Coverage is 56.25% (9/16 lines).
+  :echom execute('sign place file='.$VROOMDIR.'/testdata/dummy.py')
+  ~ .*line=17\s+id=17\s+name=sign_covered.* (regex)
+
+Finally, let's make sure that calling unrecognized providers fails gracefully:
+
   :silent file foo.unrecognized
   :CoverageShow test_coverage_provider
   ~ Error rendering coverage: ERROR\(NotFound\): Provider (regex)
