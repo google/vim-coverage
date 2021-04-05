@@ -50,7 +50,6 @@ a fake coverage provider.
   :function CheckForSign(lnum, name)
   : let matches = sign_getplaced($VROOMDIR.'/testdata/dummy.py',
   |      {'lnum': a:lnum, 'name': a:name})
-  : echom string(matches)
   : echom empty(matches[0].signs) ? 'sign missing' : 'sign found'
   :endfunction
 
