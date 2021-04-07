@@ -123,7 +123,8 @@ function! s:CoverageShow(skip_cache, ...) abort
   endif
 
   if a:0 > 0
-    call coverage#ShowCoverage(maktaba#ensure#IsString(a:1))
+    let l:provider = maktaba#ensure#IsString(a:1)
+    call coverage#ShowCoverage(l:provider)
   else
     call coverage#ShowCoverage()
   endif

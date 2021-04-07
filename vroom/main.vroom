@@ -1,16 +1,7 @@
 This file demonstrates the basics of coverage usage.
 
 In order for these tests to work, maktaba MUST be in the same parent directory
-as coverage.
-
-First, we need to work around for nvim prompting users to press enter.
-(See https://github.com/google/vim-codefmt/pull/131)
-
-  :if has('nvim')<CR>
-  |  set cmdheight=30<CR>
-  |endif<CR>
-
-Given that that's the case, all we have to do is source the
+as coverage. Given that that's the case, all we have to do is source the
 setupvroom.vim file, which bootstraps the coverage plugin and configures it to
 work properly under vroom.
 
