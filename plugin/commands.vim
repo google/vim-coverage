@@ -19,13 +19,13 @@ endif
 
 ""
 " Show coverage report. If variable b:coverage_provider is set, the provider
-" from it will be used.
-command -nargs=* -complete=customlist,coverage#CompletionList CoverageShow
-    \ call coverage#Show(<f-args>)
+" from it will be used.  Add a bang (CoverageShow!) to ignore the cache.
+command -nargs=* -bang -complete=customlist,coverage#CompletionList CoverageShow
+    \ call coverage#Show(<bang>0, <f-args>)
 
 ""
-" Toggle coverage report.
-command -nargs=0 CoverageToggle call coverage#Toggle()
+" Toggle coverage report.  Add a bang (CoverageToggle!) to ignore the cache.
+command -nargs=0 -bang CoverageToggle call coverage#Toggle(<bang>0)
 
 ""
 " Show coverage report when the file changed, using vimdiff.

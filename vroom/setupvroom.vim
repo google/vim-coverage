@@ -29,6 +29,10 @@ call maktaba#plugin#Get('coverage').Load()
 " Support vroom's fake shell executable and don't try to override it to sh.
 call maktaba#syscall#SetUsableShellRegex('\v<shell\.vroomfaker$')
 
+" Set cmdheight to avoid "Hit ENTER to continue" without needing :silent
+" https://github.com/google/vroom/issues/83
+set cmdheight=10
+
 function WriteFakeCoveragePyFile(path, lines_by_file) abort
   let l:python_command = has('python3') ? 'python3' : 'python'
   execute l:python_command '<< EOF'
