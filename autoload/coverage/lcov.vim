@@ -143,6 +143,20 @@ function! s:GetReports() abort
 endfunction
 
 ""
+" @private
+" Removes duplicates from the given report, and deals with conflicting coverage
+" files that may say a line is partially covered/uncovered, where another report
+" shows it as covered.
+function! s:CleanReport(report) abort
+  call uniq(a:report.covered)
+  call uniq(a:report.partial)
+  call uniq(a:report.uncovered)
+  call filter(a:report.partial, 'index(a:report.covered, v:val) < 0')
+  call filter(a:report.uncovered, 'index(a:report.partial, v:val) < 0')
+  call filter(a:report.uncovered, 'index(a:report.covered, v:val) < 0')
+endfunction
+
+""
 " @public
 " Produces a provider dictionary for the Lcov .
 function! coverage#lcov#GetLcovProvider() abort
@@ -151,15 +165,18 @@ function! coverage#lcov#GetLcovProvider() abort
   ""
   " Returns whether the coverage provider is available for the current file.
   "
-  " An lcov-style report can be generated for any file, so we just return true.
+  " This checks if there are any lcov-like files in the configured set of files.
+  " We can't check specificlaly for this filename unless we read each of those
+  " files, too.
   function l:provider.IsAvailable(unused_filename) abort
-    return 1
+    return !empty(s:GetCoverageDataPaths())
   endfunction
 
   function l:provider.GetCoverage(filename) abort
     let l:reports = s:GetReports()
     for [l:covered_file, l:report] in items(l:reports)
       if maktaba#string#EndsWith(a:filename, l:covered_file)
+        call s:CleanReport(l:report)
         return l:report
       endif
     endfor
