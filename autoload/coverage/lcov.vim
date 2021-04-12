@@ -69,6 +69,17 @@ function! s:TryParseLine(line) abort
   return ['covered', l:linenum]
 endfunction
 
+" @private
+" Concatenates coverage data from 'from' into 'into'.
+function! s:ExtendReport(into, from)
+  call extend(a:reports_by_file[l:current_file].covered,
+        \ l:current_report.covered)
+  call extend(a:reports_by_file[l:current_file].partial,
+        \ l:current_report.partial)
+  call extend(a:reports_by_file[l:current_file].uncovered,
+        \ l:current_report.uncovered)
+endfunction
+
 ""
 " @private
 " Adds reports for the given coverage path to the given dictionary.
@@ -96,13 +107,7 @@ function! s:ExtendReportsForData(reports_by_file, data_path) abort
     " Begins a section of coverage.
     if maktaba#string#StartsWith(l:line, 'SF:')
       let l:current_file = strcharpart(l:line, 3)
-
-      if !has_key(a:reports_by_file, l:current_file)
-        let a:reports_by_file[l:current_file] =
-              \ coverage#CreateReport([], [], [])
-      endif
-
-      let l:current_report = a:reports_by_file[l:current_file]
+      let l:current_report = coverage#CreateReport([], [], [])
       continue
     endif
 
@@ -111,7 +116,23 @@ function! s:ExtendReportsForData(reports_by_file, data_path) abort
     endif
 
     if l:line == 'end_of_record'
+      " Individual reports may have multiple rows for one line.
+      " They may indicate that a line is covered (DA), but may also provide
+      " branch information in a separate line (BA).
+      "
+      " In that case, within the report, we want to go with the partial data
+      " over the covered data.
+      call filter(l:current_report.covered,
+            \ 'index(l:current_report.partial, v:val) < 0')
+
+      if !has_key(a:reports_by_file, l:current_file)
+        let a:reports_by_file[l:current_file] = l:current_report
+      else
+        call ExtendReport(a:reports_by_file[l:current_file], l:current_report)
+      endif
+
       let l:current_file = v:null
+      let l:current_report = v:null
       continue
     endif
 
@@ -126,8 +147,6 @@ function! s:ExtendReportsForData(reports_by_file, data_path) abort
     call add(l:current_report[l:coverage_type], l:linenum)
     continue
   endfor
-
-  return a:reports_by_file
 endfunction
 
 ""
@@ -158,7 +177,7 @@ endfunction
 
 ""
 " @public
-" Produces a provider dictionary for the Lcov .
+" Produces a provider dictionary for the Lcov plugin.
 function! coverage#lcov#GetLcovProvider() abort
   let l:provider = {'name': 'lcov'}
 
