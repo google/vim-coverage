@@ -49,7 +49,7 @@
 "     @function(coverage#CreateReport) that contains all coverage data.
 "   - Name() - returns the name of the plugin.
 "   - optional: GetCoverageAsync(filename, callback) - gets the coverage and
-"     once done, invokes the provided callback with the coverage dict created by 
+"     once done, invokes the provided callback with the coverage dict created by
 "     @function(coverage#CreateReport) that contains all coverage data.
 "
 " You can define a mapping to toggle showing coverage report. To use the default
@@ -124,3 +124,17 @@ call s:plugin.Flag('uncovered_guibg', 'red')
 ""
 " Text color for the uncovered lines when in GUI mode (e.g. gvim).
 call s:plugin.Flag('uncovered_guifg', 'white')
+
+""
+" For the lcov plugin, directories under which to shallowly search for lcov data
+" files.
+call s:plugin.Flag('lcov_search_paths', ['.'])
+
+""
+" A list of |glob()| expressions representing lcov info files.
+" Files must be in the format produced by lcov's geninfo utility.
+call s:plugin.Flag('lcov_file_patterns', [
+      \ '*.gcda.info',
+      \ 'coverage.dat',
+      \ '_coverage_report.dat'
+      \ ])
