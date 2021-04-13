@@ -98,7 +98,7 @@ function! s:ExtendReportsForData(reports_by_file, data_path) abort
   let current_report = v:null
 
   for l:line in l:lines
-    let l:line = trim(l:line)
+    let l:line = maktaba#string#Strip(l:line)
 
     " SF:<absolute path to the source file>
     " Begins a section of coverage.
