@@ -1,0 +1,166 @@
+This file demonstrates the lcov integration.
+
+In order for these tests to work, maktaba MUST be in the same parent directory
+as coverage. Given that that's the case, all we have to do is source the
+setupvroom.vim file, which bootstraps the coverage plugin and configures it to
+work properly under vroom.
+
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h:h')
+  :source $VROOMDIR/setupvroom.vim
+
+To avoid having to install Glaive to test flags, we'll keep a reference to the
+plugin around.
+
+  :let g:coverage_plugin = maktaba#plugin#Get('coverage')
+
+We'll start by creating a simple C file, to help get an idea of how lcov works.
+
+  :let g:tmpdir = tempname()
+  :call mkdir(g:tmpdir)
+  :execute 'cd' g:tmpdir
+  :silent edit foo.c
+  :setf c
+  % <CR>
+  |int main() {<CR>
+  |  foo(true);<CR>
+  |}<CR>
+  |#include <stdio.h><CR>
+  |#include <stdbool.h><CR>
+  |<CR>
+  |int main() {<CR>
+  |  if (true) {<CR>
+  |    printf("covered\n");<CR>
+  |  }<CR>
+  |  if (!true) {<CR>
+  |    printf("not covered\n");<CR>
+  |  }<CR>
+  |}<CR>
+  :silent write
+
+Lcov coverage reports are stored in files typically produced by geninfo.  By
+default, the plugin will search in the current directory for lcov files.  Using
+the :CoverageShow command will show results for those files in the editor.
+
+Let's demonstrate this by first creating a simple LCOV file for our foo.c:
+
+  :silent edit test.c.gcda.info
+  % <CR>
+  |SF:foo.c<CR>
+  |FN:4,main<CR>
+  |FNDA:1,main<CR>
+  |DA:4,1<CR>
+  |DA:5,1<CR>
+  |DA:6,1<CR>
+  |DA:7,1<CR>
+  |DA:8,1<CR>
+  |DA:9,0<CR>
+  |DA:10,1<CR>
+  |DA:11,1<CR>
+  |end_of_record<CR>
+  :silent write
+
+Given the above lcov file, foo.c should show coverage everywhere except line 9:
+
+  :silent edit foo.c
+  :CoverageShow lcov
+  ~ Coverage is 87.50% (7/8 lines).
+
+
+
+Users can configure where to look for coverage files using the
+'lcov_search_paths' and 'lcov_file_patterns' flags.  Let's show this by moving
+our file to a sneaky subdirectory:
+
+  :call mkdir('foo_coverage')
+  :silent edit test.c.gcda.info
+  :silent write foo_coverage/test.bar
+  :call delete('test.c.gcda.info')
+
+
+
+Lcov coverage is only available if there's a coverage file matching the plugin
+configuration.  Since we moved the file without changing configuration, we
+should get an error if we try to show lcov coverage.
+
+  :silent edit foo.c
+  :CoverageShow! lcov
+  ~ *Provider lcov is not available* (glob)
+
+lcov_search_paths and lcov_file_patterns must both be arrays:
+
+  :call g:coverage_plugin.Flag('lcov_search_paths', './foo_coverage')
+  :CoverageShow! lcov
+  ~ Error rendering coverage: ERROR(WrongType): Expected a list. Got a string.
+  :call g:coverage_plugin.Flag('lcov_search_paths', ['./foo_coverage'])
+
+  :call g:coverage_plugin.Flag('lcov_file_patterns', '*.bar')
+  :CoverageShow! lcov
+  ~ Error rendering coverage: ERROR(WrongType): Expected a list. Got a string.
+  :call g:coverage_plugin.Flag('lcov_file_patterns', ['*.bar'])
+
+  :CoverageShow! lcov
+  ~ Coverage is 87.50% (7/8 lines).
+
+
+
+Lcov files have a few edge cases to consider.
+
+Coverage files can contain reports for multiple source files, and records for a
+single source file may exist across multiple coverage files.
+
+  @clear
+  % <CR>
+  |SF:foo.c<CR>
+  |DA:4,1<CR>
+  |DA:5,1<CR>
+  |end_of_record<CR>
+  |SOMEOTHERPREFIX:ignore this<CR>
+  |SF:not_foo.c<CR>
+  |DA:6,1<CR>
+  |end_of_record<CR>
+  :silent write! foo_coverage/test.bar
+  :silent edit foo_coverage/other.bar
+  % <CR>
+  |SF:foo.c<CR>
+  |DA:4,0<CR>
+  |DA:7,1<CR>
+  |end_of_record<CR>
+  :silent write!
+
+  :silent edit foo.c
+  :CoverageShow! lcov
+  ~ Coverage is 100.00% (3/3 lines).
+  :call delete('foo_coverage/other.bar')
+
+
+
+Next, when it comes to branches, Lcov files can show any coverage state with a
+BA line, or covered/uncovered with a BRDA line.
+
+  @clear
+  % <CR>
+  |SF:foo.c<CR>
+  |
+Partial branch lines can also have DA lines:
+  |DA:5,1<CR>
+  |
+Partial branch coverage:
+  |BA:5,1<CR>
+  |
+Full branch coverage:
+  |BA:6,2<CR>
+  |
+No branch coverage:
+  |BA:7,0<CR>
+  |
+No branch coverage:
+  |BRDA:8,foo,bar,-<CR>
+  |
+Full branch coverage:
+  |BRDA:9,foo,bar,4<CR>
+  |end_of_record<CR>
+  :silent write! foo_coverage/test.bar
+
+  :silent edit foo.c
+  :CoverageShow! lcov
+  ~ Coverage is 40.00% (2/5 lines).

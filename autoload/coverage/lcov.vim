@@ -70,14 +70,11 @@ function! s:TryParseLine(line) abort
 endfunction
 
 " @private
-" Concatenates coverage data from 'from' into 'into'.
-function! s:ExtendReport(into, from)
-  call extend(a:reports_by_file[l:current_file].covered,
-        \ l:current_report.covered)
-  call extend(a:reports_by_file[l:current_file].partial,
-        \ l:current_report.partial)
-  call extend(a:reports_by_file[l:current_file].uncovered,
-        \ l:current_report.uncovered)
+" Concatenates coverage data from 'source' into 'destination'.
+function! s:ExtendReport(destination, source)
+  call extend(a:destination.covered, a:source.covered)
+  call extend(a:destination.partial, a:source.partial)
+  call extend(a:destination.uncovered, a:source.uncovered)
 endfunction
 
 ""
@@ -128,7 +125,7 @@ function! s:ExtendReportsForData(reports_by_file, data_path) abort
       if !has_key(a:reports_by_file, l:current_file)
         let a:reports_by_file[l:current_file] = l:current_report
       else
-        call ExtendReport(a:reports_by_file[l:current_file], l:current_report)
+        call s:ExtendReport(a:reports_by_file[l:current_file], l:current_report)
       endif
 
       let l:current_file = v:null
@@ -158,6 +155,9 @@ function! s:GetReports() abort
   for l:data_path in s:GetCoverageDataPaths()
     call s:ExtendReportsForData(l:reports, l:data_path)
   endfor
+  for l:report in values(l:reports)
+    call s:CleanReport(l:report)
+  endfor
   return l:reports
 endfunction
 
@@ -170,9 +170,12 @@ function! s:CleanReport(report) abort
   call uniq(a:report.covered)
   call uniq(a:report.partial)
   call uniq(a:report.uncovered)
+  " Only keep 'partial' lines that are not in 'covered'
   call filter(a:report.partial, 'index(a:report.covered, v:val) < 0')
-  call filter(a:report.uncovered, 'index(a:report.partial, v:val) < 0')
-  call filter(a:report.uncovered, 'index(a:report.covered, v:val) < 0')
+  " Only keep 'uncovered' lines that are not in 'partial' or 'covered'
+  call filter(a:report.uncovered,
+        \ 'index(a:report.partial, v:val) < 0 ' .
+        \ '&& index(a:report.covered, v:val) < 0')
 endfunction
 
 ""
@@ -188,6 +191,8 @@ function! coverage#lcov#GetLcovProvider() abort
   " We can't check specificlaly for this filename unless we read each of those
   " files, too.
   function l:provider.IsAvailable(unused_filename) abort
+    call maktaba#ensure#IsList(s:plugin.Flag('lcov_search_paths'))
+    call maktaba#ensure#IsList(s:plugin.Flag('lcov_file_patterns'))
     return !empty(s:GetCoverageDataPaths())
   endfunction
 
@@ -195,7 +200,6 @@ function! coverage#lcov#GetLcovProvider() abort
     let l:reports = s:GetReports()
     for [l:covered_file, l:report] in items(l:reports)
       if maktaba#string#EndsWith(a:filename, l:covered_file)
-        call s:CleanReport(l:report)
         return l:report
       endif
     endfor
