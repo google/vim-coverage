@@ -42,8 +42,13 @@ either show coverage in the current buffer using the selected provider or show
 an error message if provider is not available. Normally you will trigger
 providers via key mappings and/or autocommand hooks.
 
-vim-coverage currently defines one coverage provider, a coverage.py provider for
-python. See https://github.com/google/vim-coverage/issues for other planned
+vim-coverage currently defines several coverage providers:
+1. A [coverage.py](https://coverage.readthedocs.io/) provider for python.
+2. A [covimerage](https://github.com/Vimjas/covimerage) provider for vimscript.
+3. An lcov provider for [lcov](https://github.com/linux-test-project/lcov)
+(and, by extension, gcov).
+
+See https://github.com/google/vim-coverage/issues for other planned
 integrations.
 
 Coverage offers a lot of customization on colors and signs rendered for covered
