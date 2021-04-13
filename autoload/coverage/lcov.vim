@@ -103,7 +103,7 @@ function! s:ExtendReportsForData(reports_by_file, data_path) abort
     " SF:<absolute path to the source file>
     " Begins a section of coverage.
     if maktaba#string#StartsWith(l:line, 'SF:')
-      let l:current_file = strcharpart(l:line, 3)
+      let l:current_file = l:line[3:]
       let l:current_report = coverage#CreateReport([], [], [])
       continue
     endif
