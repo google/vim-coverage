@@ -188,7 +188,7 @@ function! coverage#lcov#GetLcovProvider() abort
   " Returns whether the coverage provider is available for the current file.
   "
   " This checks if there are any lcov-like files in the configured set of files.
-  " We can't check specificlaly for this filename unless we read each of those
+  " We can't check specifically for this filename unless we read each of those
   " files, too.
   function l:provider.IsAvailable(unused_filename) abort
     call maktaba#ensure#IsList(s:plugin.Flag('lcov_search_paths'))
