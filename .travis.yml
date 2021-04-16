@@ -13,7 +13,6 @@ before_script:
   - if [ -z "$COVERAGEPY" ]; then
       sudo apt-get install python3-coverage;
     else
-      wget https://bootstrap.pypa.io/get-pip.py &&
       pip install --user "$COVERAGEPY";
     fi
   - if [ $CI_TARGET = vim ]; then
