@@ -27,7 +27,7 @@ function! s:GetCoverageDataPaths() abort
   let l:paths = join(s:plugin.Flag('lcov_search_paths'), ',')
   let l:data_files = []
   for l:lcov_file_pattern in s:plugin.Flag('lcov_file_patterns')
-    let l:data_files = extend(
+    call extend(
           \ l:data_files,
           \ globpath(l:paths, l:lcov_file_pattern, 0, 1))
   endfor
