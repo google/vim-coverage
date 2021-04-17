@@ -22,7 +22,13 @@ let s:plugin = maktaba#plugin#Get('coverage')
 
 ""
 " @private
-" Categorizes a BRDA: line in a lcov info file.
+" Categorizes a line potentially containing coverage information in a coverage
+" file.  Recognized coverage information is be formatted as:
+" - DA:<line number>,<execution count>[,<checksum>]
+" - BA:<line number>,<branch coverage (0: uncovered, 1: partial, 2: covered>
+" - BRDA:<line number>,<block number>,<branch number>,<taken>
+"
+" For BRDA, we can't get partial coverage (only '-' for uncovered, or 1+)
 function! s:TryParseLine(line) abort
   if maktaba#string#StartsWith(a:line, 'BA:') ||
         \ maktaba#string#StartsWith(a:line, 'DA:')
@@ -59,16 +65,13 @@ endfunction
 " @public
 " Gets a list of covered filenames and reports for a given lcov info file.
 "
-" There is a bunch of summary information that we're not interested in.
+" Each coverage info file may contain multiple reports for different source
+" files.
 "
-" What we want are any of:
+" Data may be formatted as:
 " - SF<absolute path to the source file>: Starts a coverage section for a file
-" - DA:<line number>,<execution count>[,<checksum>]
-" - BA:<line number>,<branch coverage (0: uncovered, 1: partial, 2: covered>
-" - BRDA:<line number>,<block number>,<branch number>,<taken>
+" - Coverage data (see s:TryParseLine)
 " - end_of_record: End of a coverage section for a file
-"
-" For BRDA, we can't get partial coverage (only '-' for uncovered, or 1+)
 function! coverage#lcov#parsing#ParseLcovFile(info_file)
       \ abort
   let l:reports = []
