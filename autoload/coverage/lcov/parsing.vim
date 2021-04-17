@@ -55,17 +55,9 @@ function! s:TryParseLine(line) abort
   return ['covered', l:linenum]
 endfunction
 
-" @private
-" Concatenates coverage data from 'source' into 'destination'.
-function! s:ExtendReport(destination, source)
-  call extend(a:destination.covered, a:source.covered)
-  call extend(a:destination.partial, a:source.partial)
-  call extend(a:destination.uncovered, a:source.uncovered)
-endfunction
-
 ""
 " @public
-" Adds reports for the given coverage path to the given dictionary.
+" Gets a list of covered filenames and reports for a given lcov info file.
 "
 " There is a bunch of summary information that we're not interested in.
 "
@@ -77,12 +69,13 @@ endfunction
 " - end_of_record: End of a coverage section for a file
 "
 " For BRDA, we can't get partial coverage (only '-' for uncovered, or 1+)
-function! coverage#lcov#parsing#ExtendReportsForData(reports_by_file, data_path)
+function! coverage#lcov#parsing#ParseLcovFile(info_file)
       \ abort
-  let lines = readfile(a:data_path)
+  let l:reports = []
+  let l:lines = readfile(a:info_file)
 
-  let current_file = v:null
-  let current_report = v:null
+  let l:current_file = v:null
+  let l:current_report = v:null
 
   for l:line in l:lines
     let l:line = maktaba#string#Strip(l:line)
@@ -109,11 +102,7 @@ function! coverage#lcov#parsing#ExtendReportsForData(reports_by_file, data_path)
       call filter(l:current_report.covered,
             \ 'index(l:current_report.partial, v:val) < 0')
 
-      if !has_key(a:reports_by_file, l:current_file)
-        let a:reports_by_file[l:current_file] = l:current_report
-      else
-        call s:ExtendReport(a:reports_by_file[l:current_file], l:current_report)
-      endif
+      call add(l:reports, [l:current_file, l:current_report])
 
       let l:current_file = v:null
       let l:current_report = v:null
@@ -131,6 +120,8 @@ function! coverage#lcov#parsing#ExtendReportsForData(reports_by_file, data_path)
     call add(l:current_report[l:coverage_type], l:linenum)
     continue
   endfor
+
+  return l:reports
 endfunction
 
 "}}}

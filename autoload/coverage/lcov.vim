@@ -23,15 +23,24 @@ let s:plugin = maktaba#plugin#Get('coverage')
 ""
 " @private
 " Gets a list of files matching the plugin settings.
-function! s:GetCoverageDataPaths() abort
+function! s:GetCoverageInfoFiles() abort
   let l:paths = join(s:plugin.Flag('lcov_search_paths'), ',')
-  let l:data_files = []
+  let l:info_files = []
   for l:lcov_file_pattern in s:plugin.Flag('lcov_file_patterns')
     call extend(
-          \ l:data_files,
+          \ l:info_files,
           \ globpath(l:paths, l:lcov_file_pattern, 0, 1))
   endfor
-  return l:data_files
+  return l:info_files
+endfunction
+
+""
+" @private
+" Concatenates coverage reports from 'source' into 'destination'.
+function! s:ExtendReport(destination, source)
+  call extend(a:destination.covered, a:source.covered)
+  call extend(a:destination.partial, a:source.partial)
+  call extend(a:destination.uncovered, a:source.uncovered)
 endfunction
 
 ""
@@ -40,9 +49,18 @@ endfunction
 " plugin configuration.
 function! s:GetReports() abort
   let l:reports = {}
-  for l:data_path in s:GetCoverageDataPaths()
-    call coverage#lcov#parsing#ExtendReportsForData(l:reports, l:data_path)
+
+  for l:info_file in s:GetCoverageInfoFiles()
+    let l:parsed_reports = coverage#lcov#parsing#ParseLcovFile(l:info_file)
+    for [l:filename, l:report] in l:parsed_reports
+      if has_key(l:reports, l:filename)
+        call s:ExtendReport(l:reports[l:filename], l:report)
+      else
+        let l:reports[l:filename] = l:report
+      endif
+    endfor
   endfor
+
   for l:report in values(l:reports)
     call s:CleanReport(l:report)
   endfor
@@ -81,7 +99,7 @@ function! coverage#lcov#GetLcovProvider() abort
   function l:provider.IsAvailable(unused_filename) abort
     call maktaba#ensure#IsList(s:plugin.Flag('lcov_search_paths'))
     call maktaba#ensure#IsList(s:plugin.Flag('lcov_file_patterns'))
-    return !empty(s:GetCoverageDataPaths())
+    return !empty(s:GetCoverageInfoFiles())
   endfunction
 
   function l:provider.GetCoverage(filename) abort
