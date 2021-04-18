@@ -35,18 +35,19 @@ let s:plugin = maktaba#plugin#Get('coverage')
 " geninfo's man page, or view the man page at:
 " http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php
 function! s:TryParseLine(line) abort
-  if maktaba#string#StartsWith(a:line, 'BA:') ||
-        \ maktaba#string#StartsWith(a:line, 'DA:')
+  let [l:prefix, l:raw_info] = split(a:line, ':', 1)
+  let l:prefix = maktaba#string#Strip(l:prefix)
+
+  if l:prefix == 'BA' || l:prefix == 'DA'
     let l:hits_index = 1
-  elseif maktaba#string#StartsWith(a:line, 'BRDA:')
+  elseif l:prefix == 'BRDA'
     let l:hits_index = 3
   else
     return []
   endif
 
   try
-    let [l:prefix, l:raw_info] = split(a:line, ':')
-    let l:info = split(l:raw_info, ',')
+    let l:info = split(l:raw_info, ',', 1)
     let l:linenum = str2nr(info[0])
     " Note that For BRDA lines, '-' is used instead of '0' for uncovered, which
     " str2nr will safely convert to 0.
@@ -93,7 +94,7 @@ function! coverage#lcov#parsing#ParseLcovFile(info_file)
     " SF:<absolute path to the source file>
     " Begins a section of coverage.
     if maktaba#string#StartsWith(l:line, 'SF:')
-      let l:current_file = l:line[3:]
+      let l:current_file = maktaba#string#Strip(l:line[3:])
       let l:current_report = coverage#CreateReport([], [], [])
       continue
     endif
