@@ -18,7 +18,7 @@ let s:plugin = maktaba#plugin#Get('coverage')
 
 "}}}
 
-"{{{ [lcov](https://github.com/linux-test-project/lcov) coverage provider.
+"{{{ Utility functions for parsing lcov files.
 
 ""
 " @private
@@ -28,7 +28,12 @@ let s:plugin = maktaba#plugin#Get('coverage')
 " - BA:<line number>,<branch coverage (0: uncovered, 1: partial, 2: covered>
 " - BRDA:<line number>,<block number>,<branch number>,<taken>
 "
-" For BRDA, we can't get partial coverage (only '-' for uncovered, or 1+)
+" Note that for BRDA lines, we can't check for partial coverage (only '-' for
+" uncovered, or 1+ for the number of times the line was run).
+"
+" For additional details on lcov's tracefile format, see FILES under on
+" geninfo's man page, or view the man page at:
+" http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php
 function! s:TryParseLine(line) abort
   if maktaba#string#StartsWith(a:line, 'BA:') ||
         \ maktaba#string#StartsWith(a:line, 'DA:')
@@ -43,7 +48,9 @@ function! s:TryParseLine(line) abort
     let [l:prefix, l:raw_info] = split(a:line, ':')
     let l:info = split(l:raw_info, ',')
     let l:linenum = str2nr(info[0])
-    let l:hits = str2nr(info[l:hits_index])  " Will return 0 if hits is '-'
+    " Note that For BRDA lines, '-' is used instead of '0' for uncovered, which
+    " str2nr will safely convert to 0.
+    let l:hits = str2nr(info[l:hits_index])
   catch
     call s:plugin.logger.Debug(
           \ 'Failed to parse lcov line (%s): %s', v:exception, a:line)
@@ -62,7 +69,7 @@ function! s:TryParseLine(line) abort
 endfunction
 
 ""
-" @public
+" @private
 " Gets a list of covered filenames and reports for a given lcov info file.
 "
 " Each coverage info file may contain multiple reports for different source
