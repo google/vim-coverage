@@ -121,15 +121,10 @@ function! coverage#lcov#parsing#ParseLcovFile(info_file)
     endif
 
     let l:parsed_line = s:TryParseLine(l:line)
-
-    " This means the line is a summary line or invalid - we don't care about it.
-    if empty(l:parsed_line)
-      continue
+    if !empty(l:parsed_line)
+      let [l:coverage_type, l:linenum] = l:parsed_line
+      call add(l:current_report[l:coverage_type], l:linenum)
     endif
-
-    let [l:coverage_type, l:linenum] = l:parsed_line
-    call add(l:current_report[l:coverage_type], l:linenum)
-    continue
   endfor
 
   return l:reports
