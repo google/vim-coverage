@@ -106,11 +106,12 @@ lcov_search_paths and lcov_file_patterns must both be arrays:
 Lcov files have a few edge cases to consider.
 
 Coverage files can contain reports for multiple source files, and records for a
-single source file may exist across multiple coverage files.
+single source file may exist across multiple coverage files.  There may also be
+extraneous whitespace, blank lines, and files with : in their names.
 
   @clear
   % <CR>
-  |SF:foo.c<CR>
+  |SF:f:oo.c<CR>
   |da:4,1<CR>
   | DA : 5 , 1 <CR>
   |END_OF_RECORD<CR>
@@ -121,13 +122,16 @@ single source file may exist across multiple coverage files.
   :silent write! foo_coverage/test.bar
   :silent edit foo_coverage/other.bar
   % <CR>
-  |SF:foo.c<CR>
+  | sf :
+  | end_of_record <CR>
+  | sf : f:oo.c<CR>
+  |
   |DA:4,0<CR>
   |DA:7,1<CR>
   |end_of_record<CR>
   :silent write!
 
-  :silent edit foo.c
+  :silent edit f:oo.c
   :CoverageShow! lcov
   ~ Coverage is 100.00% (3/3 lines).
   :call delete('foo_coverage/other.bar')

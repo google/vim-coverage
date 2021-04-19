@@ -93,8 +93,10 @@ function! coverage#lcov#parsing#ParseLcovFile(info_file)
 
     " SF:<absolute path to the source file>
     " Begins a section of coverage.
-    if maktaba#string#StartsWith(l:line, 'SF:')
-      let l:current_file = maktaba#string#Strip(l:line[3:])
+    let l:maybe_prefix = split(l:line, ':', 1)[0]
+    if maktaba#string#Strip(l:maybe_prefix) ==? 'SF'
+      let l:current_file = maktaba#string#Strip(
+            \ l:line[strlen(l:maybe_prefix) + 1:])
       let l:current_report = coverage#CreateReport([], [], [])
       continue
     endif
