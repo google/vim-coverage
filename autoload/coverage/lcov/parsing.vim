@@ -58,11 +58,11 @@ function! s:TryParseLine(line) abort
     return []
   endtry
 
-  if hits == 0
+  if hits is 0
     return ['uncovered', l:linenum]
   endif
 
-  if hits == 1 && l:prefix ==? 'BA'
+  if hits is 1 && l:prefix ==? 'BA'
     return ['partial', l:linenum]
   endif
 
