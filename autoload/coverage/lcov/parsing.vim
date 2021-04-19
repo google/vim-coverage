@@ -85,8 +85,8 @@ function! coverage#lcov#parsing#ParseLcovFile(info_file)
   let l:reports = []
   let l:lines = readfile(a:info_file)
 
-  let l:current_file = v:null
-  let l:current_report = v:null
+  let l:current_file = -1
+  let l:current_report = -1
 
   for l:line in l:lines
     let l:line = maktaba#string#Strip(l:line)
@@ -99,7 +99,7 @@ function! coverage#lcov#parsing#ParseLcovFile(info_file)
       continue
     endif
 
-    if l:current_file == v:null
+    if l:current_file is -1
       continue
     endif
 
@@ -115,8 +115,8 @@ function! coverage#lcov#parsing#ParseLcovFile(info_file)
 
       call add(l:reports, [l:current_file, l:current_report])
 
-      let l:current_file = v:null
-      let l:current_report = v:null
+      let l:current_file = -1
+      let l:current_report = -1
       continue
     endif
 
