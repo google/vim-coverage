@@ -1,4 +1,4 @@
-This file demonstrates the lcov integration.
+This file demonstrates the gcov integration.
 
 In order for these tests to work, maktaba MUST be in the same parent directory
 as coverage. Given that that's the case, all we have to do is source the
@@ -13,7 +13,7 @@ plugin around.
 
   :let g:coverage_plugin = maktaba#plugin#Get('coverage')
 
-We'll start by creating a simple C file, to help get an idea of how lcov works.
+We'll start by creating a simple C file, to help get an idea of how gcov works.
 
   :let g:tmpdir = tempname()
   :call mkdir(g:tmpdir)
@@ -37,11 +37,11 @@ We'll start by creating a simple C file, to help get an idea of how lcov works.
   |}<CR>
   :silent write
 
-Lcov coverage reports are stored in files typically produced by geninfo.  By
-default, the plugin will search in the current directory for lcov files.  Using
+Gcov coverage reports are stored in files typically produced by geninfo.  By
+default, the plugin will search in the current directory for gcov files.  Using
 the :CoverageShow command will show results for those files in the editor.
 
-Let's demonstrate this by first creating a simple LCOV file for our foo.c:
+Let's demonstrate this by first creating a simple gcov file for our foo.c:
 
   :silent edit test.c.gcda.info
   % <CR>
@@ -59,16 +59,16 @@ Let's demonstrate this by first creating a simple LCOV file for our foo.c:
   |end_of_record<CR>
   :silent write
 
-Given the above lcov file, foo.c should show coverage everywhere except line 9:
+Given the above gcov file, foo.c should show coverage everywhere except line 9:
 
   :silent edit foo.c
-  :CoverageShow lcov
+  :CoverageShow gcov
   ~ Coverage is 87.50% (7/8 lines).
 
 
 
 Users can configure where to look for coverage files using the
-'lcov_search_paths' and 'lcov_file_patterns' flags.  Let's show this by moving
+'gcov_search_paths' and 'gcov_file_patterns' flags.  Let's show this by moving
 our file to a sneaky subdirectory:
 
   :call mkdir('foo_coverage')
@@ -78,32 +78,32 @@ our file to a sneaky subdirectory:
 
 
 
-Lcov coverage is only available if there's a coverage file matching the plugin
+Gcov coverage is only available if there's a coverage file matching the plugin
 configuration.  Since we moved the file without changing configuration, we
-should get an error if we try to show lcov coverage.
+should get an error if we try to show gcov coverage.
 
   :silent edit foo.c
-  :CoverageShow! lcov
-  ~ *Provider lcov is not available* (glob)
+  :CoverageShow! gcov
+  ~ *Provider gcov is not available* (glob)
 
-lcov_search_paths and lcov_file_patterns must both be arrays:
+gcov_search_paths and gcov_file_patterns must both be arrays:
 
-  :call g:coverage_plugin.Flag('lcov_search_paths', './foo_coverage')
-  :CoverageShow! lcov
+  :call g:coverage_plugin.Flag('gcov_search_paths', './foo_coverage')
+  :CoverageShow! gcov
   ~ Error rendering coverage: ERROR(WrongType): Expected a list. Got a string.
-  :call g:coverage_plugin.Flag('lcov_search_paths', ['./foo_coverage'])
+  :call g:coverage_plugin.Flag('gcov_search_paths', ['./foo_coverage'])
 
-  :call g:coverage_plugin.Flag('lcov_file_patterns', '*.bar')
-  :CoverageShow! lcov
+  :call g:coverage_plugin.Flag('gcov_file_patterns', '*.bar')
+  :CoverageShow! gcov
   ~ Error rendering coverage: ERROR(WrongType): Expected a list. Got a string.
-  :call g:coverage_plugin.Flag('lcov_file_patterns', ['*.bar'])
+  :call g:coverage_plugin.Flag('gcov_file_patterns', ['*.bar'])
 
-  :CoverageShow! lcov
+  :CoverageShow! gcov
   ~ Coverage is 87.50% (7/8 lines).
 
 
 
-Lcov files have a few edge cases to consider.
+Gcov files have a few edge cases to consider.
 
 Coverage files can contain reports for multiple source files, and records for a
 single source file may exist across multiple coverage files.  There may also be
@@ -132,13 +132,13 @@ extraneous whitespace, blank lines, and files with : in their names.
   :silent write!
 
   :silent edit f:oo.c
-  :CoverageShow! lcov
+  :CoverageShow! gcov
   ~ Coverage is 100.00% (3/3 lines).
   :call delete('foo_coverage/other.bar')
 
 
 
-Next, when it comes to branches, Lcov files can show any coverage state with a
+Next, when it comes to branches, gcov files can show any coverage state with a
 BA line, or covered/uncovered with a BRDA line.
 
   @clear
@@ -166,5 +166,5 @@ Full branch coverage:
   :silent write! foo_coverage/test.bar
 
   :silent edit foo.c
-  :CoverageShow! lcov
+  :CoverageShow! gcov
   ~ Coverage is 40.00% (2/5 lines).

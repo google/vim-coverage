@@ -18,18 +18,18 @@ let s:plugin = maktaba#plugin#Get('coverage')
 
 "}}}
 
-"{{{ [lcov](https://github.com/linux-test-project/lcov) coverage provider.
+"{{{ [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html) coverage provider.
 
 ""
 " @private
 " Gets a list of files matching the plugin settings.
 function! s:GetCoverageInfoFiles() abort
-  let l:paths = join(s:plugin.Flag('lcov_search_paths'), ',')
+  let l:paths = join(s:plugin.Flag('gcov_search_paths'), ',')
   let l:info_files = []
-  for l:lcov_file_pattern in s:plugin.Flag('lcov_file_patterns')
+  for l:gcov_file_pattern in s:plugin.Flag('gcov_file_patterns')
     call extend(
           \ l:info_files,
-          \ globpath(l:paths, l:lcov_file_pattern, 0, 1))
+          \ globpath(l:paths, l:gcov_file_pattern, 0, 1))
   endfor
   return l:info_files
 endfunction
@@ -45,13 +45,13 @@ endfunction
 
 ""
 " @private
-" Gets a dictionary of coverage reports based on all lcov files matching the
+" Gets a dictionary of coverage reports based on all gcov files matching the
 " plugin configuration.
 function! s:GetReports() abort
   let l:reports = {}
 
   for l:info_file in s:GetCoverageInfoFiles()
-    let l:parsed_reports = coverage#lcov#parsing#ParseLcovFile(l:info_file)
+    let l:parsed_reports = coverage#gcov#parsing#ParseLcovFile(l:info_file)
     for [l:filename, l:report] in l:parsed_reports
       if has_key(l:reports, l:filename)
         call s:ExtendReport(l:reports[l:filename], l:report)
@@ -86,19 +86,19 @@ endfunction
 
 ""
 " @public
-" Produces a provider dictionary for the Lcov plugin.
-function! coverage#lcov#GetLcovProvider() abort
-  let l:provider = {'name': 'lcov'}
+" Produces a provider dictionary for the gcov plugin.
+function! coverage#gcov#GetGcovProvider() abort
+  let l:provider = {'name': 'gcov'}
 
   ""
   " Returns whether the coverage provider is available for the current file.
   "
-  " This checks if there are any lcov-like files in the configured set of files.
+  " This checks if there are any gcov-like files in the configured set of files.
   " We can't check specifically for this filename unless we read each of those
   " files, too.
   function l:provider.IsAvailable(unused_filename) abort
-    call maktaba#ensure#IsList(s:plugin.Flag('lcov_search_paths'))
-    call maktaba#ensure#IsList(s:plugin.Flag('lcov_file_patterns'))
+    call maktaba#ensure#IsList(s:plugin.Flag('gcov_search_paths'))
+    call maktaba#ensure#IsList(s:plugin.Flag('gcov_file_patterns'))
     return !empty(s:GetCoverageInfoFiles())
   endfunction
 

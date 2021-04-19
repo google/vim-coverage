@@ -45,8 +45,7 @@ providers via key mappings and/or autocommand hooks.
 vim-coverage currently defines several coverage providers:
 1. A [coverage.py](https://coverage.readthedocs.io/) provider for python.
 2. A [covimerage](https://github.com/Vimjas/covimerage) provider for vimscript.
-3. An lcov provider for [lcov](https://github.com/linux-test-project/lcov)
-(and, by extension, gcov).
+3. A gcov provider for [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html), which handles [lcov tracefiles](http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php).
 
 See https://github.com/google/vim-coverage/issues for other planned
 integrations.

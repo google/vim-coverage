@@ -126,14 +126,14 @@ call s:plugin.Flag('uncovered_guibg', 'red')
 call s:plugin.Flag('uncovered_guifg', 'white')
 
 ""
-" For the lcov plugin, directories under which to shallowly search for lcov data
+" For the gcov plugin, directories under which to shallowly search for gcov data
 " files.
-call s:plugin.Flag('lcov_search_paths', ['.'])
+call s:plugin.Flag('gcov_search_paths', ['.'])
 
 ""
-" A list of |glob()| expressions representing lcov info files.
-" Files must be in the format produced by lcov's geninfo utility.
-call s:plugin.Flag('lcov_file_patterns', [
+" A list of |glob()| expressions representing gcov info files.
+" Files must be in the format produced by gcov's geninfo utility.
+call s:plugin.Flag('gcov_file_patterns', [
       \ '*.gcda.info',
       \ 'coverage.dat',
       \ '_coverage_report.dat'

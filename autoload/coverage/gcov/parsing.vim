@@ -18,7 +18,7 @@ let s:plugin = maktaba#plugin#Get('coverage')
 
 "}}}
 
-"{{{ Utility functions for parsing lcov files.
+"{{{ Utility functions for parsing gcov files (i.e. lcov tracefiles).
 
 ""
 " @private
@@ -54,7 +54,7 @@ function! s:TryParseLine(line) abort
     let l:hits = str2nr(info[l:hits_index])
   catch
     call s:plugin.logger.Debug(
-          \ 'Failed to parse lcov line (%s): %s', v:exception, a:line)
+          \ 'Failed to parse gcov line (%s): %s', v:exception, a:line)
     return []
   endtry
 
@@ -71,7 +71,7 @@ endfunction
 
 ""
 " @private
-" Gets a list of covered filenames and reports for a given lcov info file.
+" Gets a list of covered filenames and reports for a given lcov tracefile.
 "
 " Each coverage info file may contain multiple reports for different source
 " files.
@@ -80,7 +80,7 @@ endfunction
 " - SF<absolute path to the source file>: Starts a coverage section for a file
 " - Coverage data (see s:TryParseLine)
 " - end_of_record: End of a coverage section for a file
-function! coverage#lcov#parsing#ParseLcovFile(info_file)
+function! coverage#gcov#parsing#ParseLcovFile(info_file)
       \ abort
   let l:reports = []
   let l:lines = readfile(a:info_file)
