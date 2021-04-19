@@ -111,9 +111,9 @@ single source file may exist across multiple coverage files.
   @clear
   % <CR>
   |SF:foo.c<CR>
-  |DA:4,1<CR>
+  |da:4,1<CR>
   | DA : 5 , 1 <CR>
-  |end_of_record<CR>
+  |END_OF_RECORD<CR>
   |SOMEOTHERPREFIX:ignore this<CR>
   |SF:not_foo.c<CR>
   |DA:6,1<CR>

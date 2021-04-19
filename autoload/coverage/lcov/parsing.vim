@@ -38,9 +38,9 @@ function! s:TryParseLine(line) abort
   let [l:prefix, l:raw_info] = split(a:line, ':', 1)
   let l:prefix = maktaba#string#Strip(l:prefix)
 
-  if l:prefix == 'BA' || l:prefix == 'DA'
+  if l:prefix ==? 'BA' || l:prefix ==? 'DA'
     let l:hits_index = 1
-  elseif l:prefix == 'BRDA'
+  elseif l:prefix ==? 'BRDA'
     let l:hits_index = 3
   else
     return []
@@ -62,7 +62,7 @@ function! s:TryParseLine(line) abort
     return ['uncovered', l:linenum]
   endif
 
-  if hits == 1 && l:prefix == 'BA'
+  if hits == 1 && l:prefix ==? 'BA'
     return ['partial', l:linenum]
   endif
 
@@ -103,7 +103,7 @@ function! coverage#lcov#parsing#ParseLcovFile(info_file)
       continue
     endif
 
-    if l:line == 'end_of_record'
+    if l:line ==? 'end_of_record'
       " Individual reports may have multiple rows for one line.
       " They may indicate that a line is covered (DA), but may also provide
       " branch information in a separate line (BA).
