@@ -114,7 +114,7 @@ extraneous whitespace, blank lines, and files with : in their names.
 
   @clear
   % <CR>
-  |SF:f:oo.c<CR>
+  |SF:foo.c<CR>
   |da:4,1<CR>
   | DA : 5 , 1 <CR>
   |END_OF_RECORD<CR>
@@ -127,14 +127,14 @@ extraneous whitespace, blank lines, and files with : in their names.
   % <CR>
   | sf :
   | end_of_record <CR>
-  | sf : f:oo.c<CR>
+  | sf : foo.c<CR>
   |
   |DA:4,0<CR>
   |DA:7,1<CR>
   |end_of_record<CR>
   :silent write!
 
-  :silent edit f:oo.c
+  :silent edit foo.c
   :CoverageShow! gcov
   ~ Coverage is 100.00% (3/3 lines).
   :call delete('foo_coverage/other.bar')
