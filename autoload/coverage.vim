@@ -160,6 +160,9 @@ function! coverage#GetFormattedStats(filename) abort
       let l:stats[l:state] = len(l:data[l:state])
       let l:stats['total'] += len(l:data[l:state])
     endfor
+    if l:stats.total is 0
+      return printf('Coverage is empty for file %s.', a:filename)
+    endif
     let l:percentage = 100.0 * l:stats.covered / l:stats.total
     return printf('Coverage is %.2f%% (%d/%d lines).',
           \ l:percentage, l:stats.covered, l:stats.total)

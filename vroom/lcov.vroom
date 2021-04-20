@@ -48,7 +48,7 @@ records:
   :silent write
   :silent edit foo.c
   :CoverageShow gcov
-  ~ Coverage is nan% (0/0 lines).
+  ~ Coverage is empty for file *foo.c. (glob)
 
 Gcov coverage reports are stored in files typically produced by geninfo.  By
 default, the plugin will search in the current directory for gcov files.  Using
