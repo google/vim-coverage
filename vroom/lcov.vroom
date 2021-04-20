@@ -67,9 +67,12 @@ Given the above gcov file, foo.c should show coverage everywhere except line 9:
 
 
 
-Users can configure where to look for coverage files using the
-'gcov_search_paths' and 'gcov_file_patterns' flags.  Let's show this by moving
-our file to a sneaky subdirectory:
+Deprecated: Users can configure where to look for coverage files using the
+'_gcov_temp_search_paths' and 'gcov_temp_file_patterns' globals.
+
+These flags will be removed in https://github.com/google/vim-coverage/issues/42.
+
+Let's show this by moving our file to a sneaky subdirectory:
 
   :call mkdir('foo_coverage')
   :silent edit test.c.gcda.info
@@ -88,15 +91,15 @@ should get an error if we try to show gcov coverage.
 
 gcov_search_paths and gcov_file_patterns must both be arrays:
 
-  :call g:coverage_plugin.Flag('gcov_search_paths', './foo_coverage')
+  :let g:coverage_plugin.globals._gcov_temp_search_paths = './foo_coverage'
   :CoverageShow! gcov
   ~ Error rendering coverage: ERROR(WrongType): Expected a list. Got a string.
-  :call g:coverage_plugin.Flag('gcov_search_paths', ['./foo_coverage'])
+  :let g:coverage_plugin.globals._gcov_temp_search_paths = ['./foo_coverage']
 
-  :call g:coverage_plugin.Flag('gcov_file_patterns', '*.bar')
+  :let g:coverage_plugin.globals._gcov_temp_file_patterns = '*.bar'
   :CoverageShow! gcov
   ~ Error rendering coverage: ERROR(WrongType): Expected a list. Got a string.
-  :call g:coverage_plugin.Flag('gcov_file_patterns', ['*.bar'])
+  :let g:coverage_plugin.globals._gcov_temp_file_patterns = ['*.bar']
 
   :CoverageShow! gcov
   ~ Coverage is 87.50% (7/8 lines).

@@ -16,6 +16,23 @@
 
 let s:plugin = maktaba#plugin#Get('coverage')
 
+""
+" Directories under which to shallowly search for gcov data files.
+"
+" Temporary, to be removed in https://github.com/google/vim-coverage/issues/42
+let s:plugin.globals._gcov_temp_search_paths = ['.']
+
+""
+" A list of |glob()| expressions representing gcov info files.
+" Files must be in the format produced by gcov's geninfo utility.
+"
+" Temporary, to be removed in https://github.com/google/vim-coverage/issues/42
+let s:plugin.globals._gcov_temp_file_patterns = [
+      \ '*.gcda.info',
+      \ 'coverage.dat',
+      \ '_coverage_report.dat'
+      \ ]
+
 "}}}
 
 "{{{ [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html) coverage provider.
@@ -24,9 +41,9 @@ let s:plugin = maktaba#plugin#Get('coverage')
 " @private
 " Gets a list of files matching the plugin settings.
 function! s:GetCoverageInfoFiles() abort
-  let l:paths = join(s:plugin.Flag('gcov_search_paths'), ',')
+  let l:paths = join(s:plugin.globals._gcov_temp_search_paths, ',')
   let l:info_files = []
-  for l:gcov_file_pattern in s:plugin.Flag('gcov_file_patterns')
+  for l:gcov_file_pattern in s:plugin.globals._gcov_temp_file_patterns
     call extend(
           \ l:info_files,
           \ globpath(l:paths, l:gcov_file_pattern, 0, 1))
@@ -97,8 +114,8 @@ function! coverage#gcov#GetGcovProvider() abort
   " We can't check specifically for this filename unless we read each of those
   " files, too.
   function l:provider.IsAvailable(unused_filename) abort
-    call maktaba#ensure#IsList(s:plugin.Flag('gcov_search_paths'))
-    call maktaba#ensure#IsList(s:plugin.Flag('gcov_file_patterns'))
+    call maktaba#ensure#IsList(s:plugin.globals._gcov_temp_search_paths)
+    call maktaba#ensure#IsList(s:plugin.globals._gcov_temp_file_patterns)
     return !empty(s:GetCoverageInfoFiles())
   endfunction
 
