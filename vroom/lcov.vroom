@@ -37,6 +37,19 @@ We'll start by creating a simple C file, to help get an idea of how gcov works.
   |}<CR>
   :silent write
 
+Before we do anything else, let's make sure the plugin can handle empty coverage
+records:
+
+  :silent edit test.c.gcda.info
+  % <CR>
+  |end_of_record<CR>
+  |SF:foo.c<CR>
+  |end_of_record<CR>
+  :silent write
+  :silent edit foo.c
+  :CoverageShow gcov
+  ~ Coverage is nan% (0/0 lines).
+
 Gcov coverage reports are stored in files typically produced by geninfo.  By
 default, the plugin will search in the current directory for gcov files.  Using
 the :CoverageShow command will show results for those files in the editor.
@@ -62,7 +75,7 @@ Let's demonstrate this by first creating a simple gcov file for our foo.c:
 Given the above gcov file, foo.c should show coverage everywhere except line 9:
 
   :silent edit foo.c
-  :CoverageShow gcov
+  :CoverageShow! gcov
   ~ Coverage is 87.50% (7/8 lines).
 
 

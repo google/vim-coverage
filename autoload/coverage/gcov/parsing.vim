@@ -73,6 +73,17 @@ endfunction
 " @private
 " Gets a list of covered filenames and reports for a given lcov tracefile.
 "
+" For example:
+" [
+"   ['src/foo.c', {'covered': [1, 4], 'partial': [2], 'uncovered': []}],
+"   ['src/bar.c', {'covered': [], 'partial': [], 'uncovered': [3, 4, 5]}],
+"   ['src/bat.c', {'covered': [], 'partial': [], 'uncovered': []}],
+" ]
+"
+" If the plugin cannot find any tracefiles, [] will be returned.  If a
+" tracefile has an empty record, it will be represented as an empty coverage
+" dict (as with bat.c above).
+"
 " Each coverage info file may contain multiple reports for different source
 " files.
 "
