@@ -20,18 +20,22 @@ let s:plugin = maktaba#plugin#Get('coverage')
 " Directories under which to shallowly search for gcov data files.
 "
 " Temporary, to be removed in https://github.com/google/vim-coverage/issues/42
-let s:plugin.globals._gcov_temp_search_paths = ['.']
+if !has_key(s:plugin.globals, '_gcov_temp_search_paths')
+  let s:plugin.globals._gcov_temp_search_paths = ['.']
+endif
 
 ""
 " A list of |glob()| expressions representing gcov info files.
 " Files must be in the format produced by gcov's geninfo utility.
 "
 " Temporary, to be removed in https://github.com/google/vim-coverage/issues/42
-let s:plugin.globals._gcov_temp_file_patterns = [
-      \ '*.gcda.info',
-      \ 'coverage.dat',
-      \ '_coverage_report.dat'
-      \ ]
+if !has_key(s:plugin.globals, '_gcov_temp_file_patterns')
+  let s:plugin.globals._gcov_temp_file_patterns = [
+        \ '*.gcda.info',
+        \ 'coverage.dat',
+        \ '_coverage_report.dat'
+        \ ]
+endif
 
 "}}}
 
