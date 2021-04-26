@@ -32,12 +32,18 @@ endif
 
 "{{{ coverage utility functions
 
+" Using a single sign id seems to be fine, as long as we unset it multiple
+" times again.
+" It is better than using the line numbers (conflicts), and easier than
+" managing multiple ids, which is not necessary with on/off mode only.
+let s:sign_id = 8923
+
 ""
 " Places the signs at given {lines} in given {state}.
 function! s:ColorSigns(lines, state) abort
   for l:num in a:lines
-    execute ':sign place ' . l:num . ' line=' . l:num .
-          \ ' name=sign_' . a:state . ' file=' . expand('%')
+    execute ':sign place ' . s:sign_id . ' line=' . l:num .
+          \ ' name=coverage_' . a:state . ' file=' . expand('%')
   endfor
 endfunction
 
@@ -53,7 +59,7 @@ function! s:DefineHighlighting() abort
           \ ' ctermfg=' . s:plugin.Flag(l:state . '_ctermfg') .
           \ ' guibg=' . s:plugin.Flag(l:state . '_guibg') .
           \ ' guifg=' . s:plugin.Flag(l:state . '_guifg')
-      execute 'sign define sign_' . l:state . ' text=' .
+      execute 'sign define coverage_' . l:state . ' text=' .
           \ s:plugin.Flag(l:state . '_text') . ' texthl=coverage_' . l:state
     endfor
   endif
@@ -85,7 +91,19 @@ endfunction
 " Hides coverage layer.
 function! s:CoverageHide() abort
   if has_key(s:visible, expand('%:p'))
-    execute 'sign unplace * file=' . expand('%:p')
+    " Unplace our signs for the current file.
+    let fname = bufname('%')
+    let signs = split(maktaba#command#GetOutput('sign place file=' . fname), '\n')
+
+    for s in signs
+      let cols = split(s)
+      let name = split(cols[-1], '=')[-1]
+      if name[0:8] ==# 'coverage_'
+        let id = split(cols[-2], '=')[-1]
+        let id = s:sign_id
+        exe printf('sign unplace %d file=%s', id, fname)
+      endif
+    endfor
     unlet s:visible[expand('%:p')]
   endif
 endfunction
