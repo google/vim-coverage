@@ -1,0 +1,186 @@
+This file demonstrates the gcov integration.
+
+In order for these tests to work, maktaba MUST be in the same parent directory
+as coverage. Given that that's the case, all we have to do is source the
+setupvroom.vim file, which bootstraps the coverage plugin and configures it to
+work properly under vroom.
+
+  :let g:repo = fnamemodify($VROOMFILE, ':p:h:h:h')
+  :source $VROOMDIR/setupvroom.vim
+
+To avoid having to install Glaive to test flags, we'll keep a reference to the
+plugin around.
+
+  :let g:coverage_plugin = maktaba#plugin#Get('coverage')
+
+We'll start by creating a simple C file, to help get an idea of how gcov works.
+
+  :let g:tmpdir = tempname()
+  :call mkdir(g:tmpdir)
+  :execute 'cd' g:tmpdir
+  :silent edit foo.c
+  :setf c
+  % <CR>
+  |int main() {<CR>
+  |  foo(true);<CR>
+  |}<CR>
+  |#include <stdio.h><CR>
+  |#include <stdbool.h><CR>
+  |<CR>
+  |int main() {<CR>
+  |  if (true) {<CR>
+  |    printf("covered\n");<CR>
+  |  }<CR>
+  |  if (!true) {<CR>
+  |    printf("not covered\n");<CR>
+  |  }<CR>
+  |}<CR>
+  :silent write
+
+Before we do anything else, let's make sure the plugin can handle empty coverage
+records:
+
+  :silent edit test.c.gcda.info
+  % <CR>
+  |end_of_record<CR>
+  |SF:foo.c<CR>
+  |end_of_record<CR>
+  :silent write
+  :silent edit foo.c
+  :CoverageShow gcov
+  ~ Coverage is empty for file *foo.c. (glob)
+
+Gcov coverage reports are stored in files typically produced by geninfo.  By
+default, the plugin will search in the current directory for gcov files.  Using
+the :CoverageShow command will show results for those files in the editor.
+
+Let's demonstrate this by first creating a simple gcov file for our foo.c:
+
+  :silent edit test.c.gcda.info
+  % <CR>
+  |SF:foo.c<CR>
+  |FN:4,main<CR>
+  |FNDA:1,main<CR>
+  |DA:4,1<CR>
+  |DA:5,1<CR>
+  |DA:6,1<CR>
+  |DA:7,1<CR>
+  |DA:8,1<CR>
+  |DA:9,0<CR>
+  |DA:10,1<CR>
+  |DA:11,1<CR>
+  |end_of_record<CR>
+  :silent write
+
+Given the above gcov file, foo.c should show coverage everywhere except line 9:
+
+  :silent edit foo.c
+  :CoverageShow! gcov
+  ~ Coverage is 87.50% (7/8 lines).
+
+
+
+Deprecated: Users can configure where to look for coverage files using the
+'_gcov_temp_search_paths' and 'gcov_temp_file_patterns' globals.
+
+These flags will be removed in https://github.com/google/vim-coverage/issues/42.
+
+Let's show this by moving our file to a sneaky subdirectory:
+
+  :call mkdir('foo_coverage')
+  :silent edit test.c.gcda.info
+  :silent write foo_coverage/test.bar
+  :call delete('test.c.gcda.info')
+
+
+
+Gcov coverage is only available if there's a coverage file matching the plugin
+configuration.  Since we moved the file without changing configuration, we
+should get an error if we try to show gcov coverage.
+
+  :silent edit foo.c
+  :CoverageShow! gcov
+  ~ *Provider gcov is not available* (glob)
+
+gcov_search_paths and gcov_file_patterns must both be arrays:
+
+  :let g:coverage_plugin.globals._gcov_temp_search_paths = './foo_coverage'
+  :CoverageShow! gcov
+  ~ Error rendering coverage: ERROR(WrongType): Expected a list. Got a string.
+  :let g:coverage_plugin.globals._gcov_temp_search_paths = ['./foo_coverage']
+
+  :let g:coverage_plugin.globals._gcov_temp_file_patterns = '*.bar'
+  :CoverageShow! gcov
+  ~ Error rendering coverage: ERROR(WrongType): Expected a list. Got a string.
+  :let g:coverage_plugin.globals._gcov_temp_file_patterns = ['*.bar']
+
+  :CoverageShow! gcov
+  ~ Coverage is 87.50% (7/8 lines).
+
+
+
+Gcov files have a few edge cases to consider.
+
+Coverage files can contain reports for multiple source files, and records for a
+single source file may exist across multiple coverage files.  There may also be
+extraneous whitespace, blank lines, and files with : in their names.
+
+  @clear
+  % <CR>
+  |SF:foo.c<CR>
+  |da:4,1<CR>
+  | DA : 5 , 1 <CR>
+  |END_OF_RECORD<CR>
+  |SOMEOTHERPREFIX:ignore this<CR>
+  |SF:not_foo.c<CR>
+  |DA:6,1<CR>
+  |end_of_record<CR>
+  :silent write! foo_coverage/test.bar
+  :silent edit foo_coverage/other.bar
+  % <CR>
+  | sf :
+  | end_of_record <CR>
+  | sf : foo.c<CR>
+  |
+  |DA:4,0<CR>
+  |DA:7,1<CR>
+  |end_of_record<CR>
+  :silent write!
+
+  :silent edit foo.c
+  :CoverageShow! gcov
+  ~ Coverage is 100.00% (3/3 lines).
+  :call delete('foo_coverage/other.bar')
+
+
+
+Next, when it comes to branches, gcov files can show any coverage state with a
+BA line, or covered/uncovered with a BRDA line.
+
+  @clear
+  % <CR>
+  |SF:foo.c<CR>
+  |
+Partial branch lines can also have DA lines:
+  |DA:5,1<CR>
+  |
+Partial branch coverage:
+  |BA:5,1<CR>
+  |
+Full branch coverage:
+  |BA:6,2<CR>
+  |
+No branch coverage:
+  |BA:7,0<CR>
+  |
+No branch coverage:
+  |BRDA:8,foo,bar,-<CR>
+  |
+Full branch coverage:
+  |BRDA:9,foo,bar,4<CR>
+  |end_of_record<CR>
+  :silent write! foo_coverage/test.bar
+
+  :silent edit foo.c
+  :CoverageShow! gcov
+  ~ Coverage is 40.00% (2/5 lines).

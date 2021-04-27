@@ -17,3 +17,4 @@ call s:registry.SetValidator('coverage#EnsureProvider')
 
 call s:registry.AddExtension(coverage#python#GetCoveragePyProvider())
 call s:registry.AddExtension(coverage#vim#GetCovimerageProvider())
+call s:registry.AddExtension(coverage#gcov#GetGcovProvider())

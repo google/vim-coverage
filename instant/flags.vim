@@ -49,7 +49,7 @@
 "     @function(coverage#CreateReport) that contains all coverage data.
 "   - Name() - returns the name of the plugin.
 "   - optional: GetCoverageAsync(filename, callback) - gets the coverage and
-"     once done, invokes the provided callback with the coverage dict created by 
+"     once done, invokes the provided callback with the coverage dict created by
 "     @function(coverage#CreateReport) that contains all coverage data.
 "
 " You can define a mapping to toggle showing coverage report. To use the default
