@@ -6,9 +6,15 @@ env:
     - CI_TARGET=vim MAKTABA_VERSION=1.14.0
     - CI_TARGET=vim MAKTABA_VERSION=master
     - CI_TARGET=neovim MAKTABA_VERSION=master
+    - CI_TARGET=vim MAKTABA_VERSION=master COVERAGEPY="coverage>4,<5"
 before_script:
   - sudo apt-get update
-  - sudo apt-get install python3-dev python3-coverage
+  - sudo apt-get install python3-dev
+  - if [ -z "$COVERAGEPY" ]; then
+      sudo apt-get install python3-coverage;
+    else
+      pip install --user "$COVERAGEPY";
+    fi
   - if [ $CI_TARGET = vim ]; then
       sudo apt-get install vim-gnome;
     elif [ $CI_TARGET = neovim ]; then
@@ -23,6 +29,12 @@ before_script:
 services:
   - xvfb
 script:
+  - if [ -z "$COVERAGEPY" ]; then
+      python-coverage --version;
+    else
+      which coverage;
+      coverage --version;
+    fi
   - '[ $CI_TARGET = neovim ] && VROOM_ARGS="--neovim" || VROOM_ARGS=""'
   - vroom $VROOM_ARGS --crawl ./vroom/
 matrix:
