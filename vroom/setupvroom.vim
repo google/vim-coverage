@@ -50,6 +50,5 @@ if hasattr(cov, 'add_lines'):
   cov.add_lines(line_data_dict)
 else:
   cov.add_line_data(line_data_dict)
-cov.write_file(os.path.join(path, '.coverage'))
 EOF
 endfunction
