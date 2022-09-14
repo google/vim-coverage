@@ -35,7 +35,8 @@ let s:plugin = maktaba#plugin#Get('coverage')
 " geninfo's man page, or view the man page at:
 " http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php
 function! s:TryParseLine(line) abort
-  let [l:prefix, l:raw_info] = split(a:line, ':', 1)
+  let [l:prefix; l:raw_info] = split(a:line, ':', 1)
+  let l:raw_info = join(l:raw_info, ':')
   let l:prefix = maktaba#string#Strip(l:prefix)
 
   if l:prefix ==? 'BA' || l:prefix ==? 'DA'
