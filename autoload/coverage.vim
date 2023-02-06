@@ -27,6 +27,7 @@ endif
 if !exists('s:coverage_states')
   let s:coverage_states = ['covered', 'uncovered', 'partial']
 endif
+let s:highlights_defined = 0
 
 "}}}
 
@@ -46,17 +47,15 @@ endfunction
 " Defines highlighting rules for coverage colors and defines text signs for each
 " coverage state, as defined via plugin flags. See |coverage-config|.
 function! s:DefineHighlighting() abort
-  if !hlexists('coverage_covered')
-    for l:state in s:coverage_states
-      execute 'highlight coverage_' . l:state .
+  for l:state in s:coverage_states
+    execute 'highlight coverage_' . l:state .
           \ ' ctermbg=' . s:plugin.Flag(l:state . '_ctermbg') .
           \ ' ctermfg=' . s:plugin.Flag(l:state . '_ctermfg') .
           \ ' guibg=' . s:plugin.Flag(l:state . '_guibg') .
           \ ' guifg=' . s:plugin.Flag(l:state . '_guifg')
-      execute 'sign define sign_' . l:state . ' text=' .
+    execute 'sign define sign_' . l:state . ' text=' .
           \ s:plugin.Flag(l:state . '_text') . ' texthl=coverage_' . l:state
-    endfor
-  endif
+  endfor
 endfunction
 
 
@@ -67,7 +66,9 @@ endfunction
 " @default show_stats=1
 function! s:RenderFromCache(filename, ...) abort
   let l:show_stats = maktaba#ensure#IsBool(get(a:, 1, 1))
-  call s:DefineHighlighting()
+  if !s:highlights_defined
+    call s:DefineHighlighting()
+  endif
   if (has_key(s:cache, a:filename))
     let l:data = s:cache[a:filename]
     for l:state in s:coverage_states
@@ -330,5 +331,13 @@ function! coverage#EnsureProvider(provider) abort
         \ string(a:provider))
   endif
 endfunction
+
+
+""
+" Re-define highlights after the colorscheme was changed.
+augroup coverage_highlights
+  au!
+  autocmd ColorScheme * if s:highlights_defined | call s:DefineHighlighting() | endif
+augroup END
 
 "}}}
